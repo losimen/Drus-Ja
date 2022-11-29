@@ -37,11 +37,21 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(STARTCOMMENT, "/\\*"),
         TokenType(ENDCOMMENT, "\\*/"),
         TokenType(NEWLINE, "\\n"),
-        TokenType(SPACE, " ")
+        TokenType(SPACE, " "),
 };
 
 
 TokenList &TokenTypeList::getTokenTypeList()
 {
     return tokenTypeList;
+}
+
+TokenType TokenTypeList::getTokenType(const std::string &name)
+{
+    // TODO: use stl
+    for (auto &tokenType: tokenTypeList)
+        if (tokenType.name == name)
+            return tokenType;
+
+    return TokenType();
 }

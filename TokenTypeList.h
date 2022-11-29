@@ -37,12 +37,11 @@ namespace TokenTypes {
     const std::string NOT = "NOT";
     const std::string DATATYPE = "DATATYPE";
     const std::string STARTCOMMENT = "StartComment";
+    const std::string CONTENTCOMMENT = "ContentComment";
     const std::string ENDCOMMENT = "EndComment";
     const std::string NEWLINE = "NEWLINE";
     const std::string SPACE = "SPACE";
 }
-
-
 
 
 typedef std::vector<TokenType> TokenList;
@@ -56,7 +55,7 @@ private:
 public:
     TokenTypeList() = default;
 
-    static TokenType &getTokenType();
+    static TokenType getTokenType(const std::string &name);
     static TokenList &getTokenTypeList();
 };
 

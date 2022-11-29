@@ -29,6 +29,9 @@ private:
     std::vector<Token> tokenList;
 
     bool nextToken();
+
+    void
+
 public:
     LexicalAnalyzer();
 
