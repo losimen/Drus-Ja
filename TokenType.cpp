@@ -10,3 +10,9 @@ TokenType::TokenType(const std::string &name, const std::string &regex)
     this->name = name;
     this->regex = regex;
 }
+
+
+TokenType::TokenType()
+{
+    this->name = "UNDEFINED";
+}

@@ -6,6 +6,19 @@
 #define DRUS_JA_TOKEN_H
 
 
+#include <string>
+
+#include "TokenType.h"
+
+
+struct Token
+{
+    TokenType type;
+    std::string value;
+    unsigned pos;
+
+    Token() = default;
+};
 
 
 

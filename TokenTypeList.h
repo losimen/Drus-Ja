@@ -5,7 +5,7 @@
 #ifndef DRUS_JA_TOKENTYPELIST_H
 #define DRUS_JA_TOKENTYPELIST_H
 
-#include <unordered_map>
+
 #include <string>
 #include <vector>
 

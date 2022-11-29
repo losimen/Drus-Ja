@@ -5,7 +5,8 @@
 #include "TokenTypeList.h"
 
 
-TokenList TokenTypeList::tokenTypeList {
+TokenList TokenTypeList::tokenTypeList
+{
         TokenType("PROGRAM", "Program"),
         TokenType("VAR", "Var"),
         TokenType("START", "Start"),
@@ -16,23 +17,24 @@ TokenList TokenTypeList::tokenTypeList {
         TokenType("SEMICOLON", ";"),
         TokenType("STARTCYCLE", "For"),
         TokenType("ENDCYCLE", "DownTo"),
-        TokenType("PLUS", "+"),
+        TokenType("PLUS", "\\+"),
         TokenType("MINUS", "-"),
         TokenType("MULTIPLY", "Mul"),
         TokenType("DIVIDE", "Div"),
         TokenType("MOD", "Mod"),
-        TokenType("LPAREN", "("),
-        TokenType("RPAREN", ")"),
+        TokenType("LPAREN", "\\("),
+        TokenType("RPAREN", "\\)"),
         TokenType("EQUAL", "=="),
         TokenType("NOTEQUAL", "!="),
         TokenType("GREATER", "Ge"),
         TokenType("LESS", "Le"),
         TokenType("AND", "&&"),
-        TokenType("OR", "||"),
+//        TokenType("OR", "\\||"),
         TokenType("NOT", "!!"),
         TokenType("DATATYPE", "Integer"),
-        TokenType("StartComment", "/*"),
-        TokenType("EndComment", "*/"),
+//        TokenType("StartComment", "/*"),
+//        TokenType("EndComment", "*/"),
+        TokenType("EMPTY", "[\\n\\t\\r]")
 };
 
 

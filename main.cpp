@@ -4,6 +4,7 @@
 #include <regex>
 
 #include "TokenTypeList.h"
+#include "LexicalAnalyzer.h"
 
 
 std::string readFile(const char *fName)
@@ -31,15 +32,9 @@ int main() {
 //        std::cout << i.first << " " << i.second.name << std::endl;
 //    }
 
-    std::regex self_regex("Program", std::regex_constants::ECMAScript | std::regex_constants::icase);
 
-    if (std::regex_search(fileBuffer, self_regex))
-    {
-        std::cout << "Text contains the phrase 'regular expressions'\n";
-    }
-
-//    LexicalAnalyzer lexicalAnalyzer(fileBuffer);
-//    lexicalAnalyzer.doLexicalAnalysis();
+    LexicalAnalyzer lexicalAnalyzer;
+    lexicalAnalyzer.analyze(fileBuffer);
 
     return 0;
 }

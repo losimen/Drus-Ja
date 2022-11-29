@@ -15,7 +15,7 @@ struct TokenType
     std::string name;
     std::string regex;
 
-    TokenType() = delete;
+    TokenType();
     TokenType(const std::string &name, const std::string &regex);
 };
 
