@@ -15,6 +15,9 @@ struct Token
 {
     TokenType type;
     std::string value;
+
+    unsigned line;
+    unsigned row;
     unsigned pos;
 
     Token() = default;

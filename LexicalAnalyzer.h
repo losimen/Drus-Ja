@@ -19,8 +19,11 @@ class LexicalAnalyzer
 private:
     std::vector<TokenType> &tokenTypeList;
 
-    std::string code;
+    unsigned line;
     unsigned pos;
+    unsigned row;
+
+    std::string code;
     std::vector<Token> tokenList;
 
     bool nextToken();

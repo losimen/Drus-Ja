@@ -34,7 +34,7 @@ TokenList TokenTypeList::tokenTypeList
         TokenType("DATATYPE", "Integer"),
 //        TokenType("StartComment", "/*"),
 //        TokenType("EndComment", "*/"),
-        TokenType("EMPTY", "[\\n\\t\\r]")
+        TokenType("NEWLINE", "\\n")
 };
 
 

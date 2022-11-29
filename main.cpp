@@ -34,7 +34,10 @@ int main() {
 
 
     LexicalAnalyzer lexicalAnalyzer;
-    lexicalAnalyzer.analyze(fileBuffer);
+    std::vector<Token> tokens = lexicalAnalyzer.analyze(fileBuffer);
+
+    for (auto &token: tokens)
+        std::cout << "L: " << token.line << "[" << token.row << "]" << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
 
     return 0;
 }
