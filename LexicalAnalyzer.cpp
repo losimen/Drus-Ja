@@ -7,6 +7,8 @@
 
 LexicalAnalyzer::LexicalAnalyzer(): tokenTypeList(TokenTypeList::getTokenTypeList())
 {
+    isComment = false;
+    line = 1;
     pos = 0;
 }
 
@@ -15,6 +17,13 @@ bool LexicalAnalyzer::nextToken()
 {
     if (pos >= code.length())
         return false;
+
+
+    if (isComment)
+    {
+
+    }
+
 
     for (auto &type: tokenTypeList)
     {
@@ -28,7 +37,6 @@ bool LexicalAnalyzer::nextToken()
             token.pos = pos;
             token.value = code.substr(pos, cm.length());
 
-            row += cm.length();
             pos += cm.length();
 
             token.type = type;
@@ -40,6 +48,14 @@ bool LexicalAnalyzer::nextToken()
             {
                 row = 1;
                 line++;
+                return true;
+            }
+//            else if (token.type.name)
+//            {
+//
+//            }
+            else if (token.type.name == "SPACE")
+            {
                 return true;
             }
             else

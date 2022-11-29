@@ -19,6 +19,8 @@ class LexicalAnalyzer
 private:
     std::vector<TokenType> &tokenTypeList;
 
+    bool isComment;
+
     unsigned line;
     unsigned pos;
     unsigned row;
