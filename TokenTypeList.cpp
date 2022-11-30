@@ -15,6 +15,8 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(FINISH, "Finish"),
         TokenType(INPUT, "Input"),
         TokenType(OUTPUT, "Output"),
+        TokenType(VARIABLE, "[a-z]*"),
+        TokenType(NUMBER, "^-?[0-9]\\d*"),
         TokenType(ASSIGMENT, "->"),
         TokenType(SEMICOLON, ";"),
         TokenType(STARTCYCLE, "For"),
@@ -37,10 +39,7 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(STARTCOMMENT, "/\\*"),
         TokenType(ENDCOMMENT, "\\*/"),
         TokenType(NEWLINE, "\\n"),
-        TokenType(SPACE, " "),
-        TokenType(VARIABLE, "[a-z]*"),
-        // TODO: fix regex
-        TokenType(NUMBER, "[0-9]*")
+        TokenType(SPACE, " ")
 };
 
 

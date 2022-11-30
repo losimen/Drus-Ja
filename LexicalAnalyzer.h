@@ -1,6 +1,5 @@
-//
-// Created by Павло Коваль on 29.11.2022.
-//
+// Drus_Ja by losimen 29.11.2022
+
 
 #ifndef DRUS_JA_LEXICALANALYZER_H
 #define DRUS_JA_LEXICALANALYZER_H
