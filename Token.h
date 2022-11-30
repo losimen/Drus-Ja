@@ -4,7 +4,6 @@
 #ifndef DRUS_JA_TOKEN_H
 #define DRUS_JA_TOKEN_H
 
-
 #include <string>
 
 #include "TokenType.h"
@@ -19,7 +18,7 @@ struct Token
     unsigned row;
     unsigned pos;
 
-    Token() = default;
+    Token();
 };
 
 

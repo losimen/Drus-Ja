@@ -17,6 +17,8 @@ private:
     std::vector<Token> &tokens;
     unsigned pos;
 
+    Token match (std::initializer_list<TokenType> tokensType);
+
 public:
     SyntaxAnalyzer() = delete;
     SyntaxAnalyzer(std::vector<Token> &tokens);

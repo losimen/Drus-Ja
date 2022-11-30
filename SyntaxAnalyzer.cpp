@@ -1,6 +1,4 @@
-//
-// Created by Павло Коваль on 30.11.2022.
-//
+// Drus_Ja by losimen 29.11.2022
 
 #include "SyntaxAnalyzer.h"
 
@@ -19,5 +17,18 @@ Token SyntaxAnalyzer::match()
 Token SyntaxAnalyzer::require()
 {
     return Token();
+}
+
+Token SyntaxAnalyzer::match(std::initializer_list<TokenType> tokenTyp)
+{
+    Token token;
+
+    if (pos < tokens.size())
+    {
+        return token;
+    }
+
+
+    return token;
 }
 

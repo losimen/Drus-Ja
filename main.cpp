@@ -1,3 +1,5 @@
+// Drus_Ja by losimen 27.11.2022
+
 #include <iostream>
 #include <vector>
 #include <fstream>
