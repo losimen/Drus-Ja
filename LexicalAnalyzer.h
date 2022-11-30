@@ -31,9 +31,10 @@ private:
     bool nextToken();
 
 public:
-    LexicalAnalyzer();
+    LexicalAnalyzer() = delete;
+    LexicalAnalyzer(const std::string &code);
 
-    std::vector<Token> analyze(std::string &input);
+    std::vector<Token> analyze();
 };
 
 

@@ -5,14 +5,6 @@
 #include "LexicalAnalyzer.h"
 
 
-LexicalAnalyzer::LexicalAnalyzer(): tokenTypeList(TokenTypeList::getTokenTypeList())
-{
-    isComment = false;
-    line = 1;
-    pos = 0;
-}
-
-
 bool LexicalAnalyzer::nextToken()
 {
     if (pos >= code.length())
@@ -122,17 +114,26 @@ bool LexicalAnalyzer::nextToken()
     throw std::runtime_error("Undefined token");
 }
 
-std::vector<Token> LexicalAnalyzer::analyze(std::string &input)
+
+LexicalAnalyzer::LexicalAnalyzer(const std::string &code): tokenTypeList(TokenTypeList::getTokenTypeList())
 {
-    code = input;
+    this->code = code;
+    isComment = false;
+    line = 1;
+    pos = 0;
+}
+
+
+std::vector<Token> LexicalAnalyzer::analyze()
+{
     line = 1;
     row = 1;
 
     while (nextToken())
     {
-        auto token = tokenList.end() - 1;
-
-//        std::cout << token->type.name << std::endl;
+        // For logging:
+        // auto token = tokenList.end() - 1;
+        // std::cout << token->type.name << std::endl;
     }
 
     std::cout << "Total amount of lines: " << line << std::endl;
