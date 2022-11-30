@@ -53,23 +53,47 @@ bool LexicalAnalyzer::nextToken()
         return true;
     }
 
-    // Check line for tokens
+
+    std::string subCode = code.substr(pos);
     for (auto &type: tokenTypeList)
     {
         std::regex selfRegex("^" + type.regex, std::regex_constants::ECMAScript | std::regex_constants::icase);
-        std::cmatch cm;
+        std::smatch sm;
 
-        if (std::regex_search(code.substr(pos).c_str(), cm, selfRegex))
+        if (std::regex_search(subCode, sm, selfRegex))
         {
+            /* TODO: fix bag?
+             * ^[1-9]* matches words and digits somehow??
+             * when ^[1-9]* receives string with letters |=> sm.length() = 0;
+             *
+             *    TRY THIS CODE:
+             --------- start code -----
+             std::string reg= "^[1-9]*";
+             std::string code = "ggg";
+
+             std::regex selfRegex(reg, std::regex_constants::ECMAScript | std::regex_constants::icase);
+             std::smatch sm;
+
+             if (std::regex_search(code, sm, selfRegex))
+             {
+             std::cout << "found: " << sm.str() << std::endl;
+             std::cout << "number: " << sm.str().length() << std::endl;
+             }
+             --------- end code ----
+             * it works in opposite way with ^[a-z]*
+             */
+            if (sm.length() == 0)
+                continue;
+
             Token token;
 
             token.pos = pos;
             token.type = type;
             token.line = line;
             token.row = row;
-            token.value = code.substr(pos, cm.length());
+            token.value = code.substr(pos, sm.length());
 
-            pos += cm.length();
+            pos += sm.length();
 
             // std::cout << "Found token: " << token.type.name << " value:  " << token.value << " pos: " << token.pos << std::endl;
             if (token.type.name == TokenTypes::NEWLINE)

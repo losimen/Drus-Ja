@@ -1,9 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <regex>
 
-#include "TokenTypeList.h"
 #include "LexicalAnalyzer.h"
 
 
@@ -25,13 +23,6 @@ std::string readFile(const char *fName)
 
 int main() {
     std::string fileBuffer = readFile("File.txt");
-
-    TokenList &tokenTypeList = TokenTypeList::getTokenTypeList();
-//    for (auto &i : tokenTypeList)
-//    {
-//        std::cout << i.first << " " << i.second.name << std::endl;
-//    }
-
 
     LexicalAnalyzer lexicalAnalyzer;
     std::vector<Token> tokens = lexicalAnalyzer.analyze(fileBuffer);

@@ -30,8 +30,6 @@ private:
 
     bool nextToken();
 
-    void
-
 public:
     LexicalAnalyzer();
 

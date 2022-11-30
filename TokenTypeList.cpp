@@ -38,6 +38,8 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(ENDCOMMENT, "\\*/"),
         TokenType(NEWLINE, "\\n"),
         TokenType(SPACE, " "),
+        TokenType(VARIABLE, "[a-z]*"),
+        TokenType(NUMBER, "[0-9]*")
 };
 
 

@@ -41,6 +41,8 @@ namespace TokenTypes {
     const std::string ENDCOMMENT = "EndComment";
     const std::string NEWLINE = "NEWLINE";
     const std::string SPACE = "SPACE";
+    const std::string NUMBER = "NUMBER";
+    const std::string VARIABLE = "VARIABLE";
 }
 
 
