@@ -22,6 +22,7 @@ std::string readFile(const char *fName)
 
 
 int main() {
+    // TODO: add negative numbers
     std::string fileBuffer = readFile("File.txt");
 
     LexicalAnalyzer lexicalAnalyzer(fileBuffer);

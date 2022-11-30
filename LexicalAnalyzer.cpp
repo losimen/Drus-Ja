@@ -45,7 +45,6 @@ bool LexicalAnalyzer::nextToken()
         return true;
     }
 
-
     std::string subCode = code.substr(pos);
     for (auto &type: tokenTypeList)
     {
@@ -100,7 +99,7 @@ bool LexicalAnalyzer::nextToken()
             }
             else if (token.type.name == TokenTypes::SPACE)
             {
-                pos++;
+                // Do nothing
             }
             else
             {
@@ -111,7 +110,7 @@ bool LexicalAnalyzer::nextToken()
         }
     }
 
-    throw std::runtime_error("Undefined token");
+    throw std::runtime_error("Undefined token " + std::string(1, code[pos]) +  " at " + std::to_string(line) + " line");
 }
 
 
