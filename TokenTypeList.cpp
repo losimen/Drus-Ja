@@ -39,6 +39,7 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(NEWLINE, "\\n"),
         TokenType(SPACE, " "),
         TokenType(VARIABLE, "[a-z]*"),
+        // TODO: fix regex
         TokenType(NUMBER, "[0-9]*")
 };
 
