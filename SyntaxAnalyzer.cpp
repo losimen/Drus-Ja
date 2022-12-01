@@ -26,15 +26,18 @@ Token SyntaxAnalyzer::match(std::initializer_list<std::string> expected)
     return Token();
 }
 
+
 Token SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
 {
     Token token = match(expected);
 
     if (token.type.name == TokenTypes::UNDEFINED)
-        throw std::runtime_error("Syntax error " + std::to_string(token.line) + ": expected " + *expected.begin());
+        throw std::runtime_error("Syntax error " + std::to_string(token.line) + " |p: " +
+                                 std::to_string(token.pos) + ": expected " + *expected.begin());
 
     return token;
 }
+
 
 std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 {
@@ -51,9 +54,11 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
     return root;
 }
 
+
 std::unique_ptr<INode> SyntaxAnalyzer::parseExpression()
 {
     if (match({TokenTypes::VARIABLE}).type.name == TokenTypes::UNDEFINED)
+        // TODO: parse print and read
         throw std::runtime_error("NOT READY");
 
     pos -= 1;
@@ -74,9 +79,9 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseExpression()
 std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
 {
     auto leftNode = parseParenthesis();
-    auto op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
 
-    if (op.type.name != TokenTypes::UNDEFINED)
+    Token op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
+    while (op.type.name != TokenTypes::UNDEFINED)
     {
         auto rightNode = parseParenthesis();
         leftNode = ASTFactory::createBinOperationNode(op, leftNode, rightNode);
