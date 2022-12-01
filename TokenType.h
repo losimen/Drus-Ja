@@ -13,7 +13,7 @@ namespace TokenTypes
 {
     const std::string UNDEFINED = "UNDEFINED";
     const std::string PROGRAM = "PROGRAM";
-    const std::string VAR = "VAR";
+    const std::string VARBLOCK = "VARBLOCK";
     const std::string START = "START";
     const std::string FINISH = "FINISH";
     const std::string INPUT = "INPUT";

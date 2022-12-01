@@ -23,7 +23,7 @@ private:
     bool isFinish;
 
     Token match(std::initializer_list<std::string> expected);
-    void require(std::initializer_list<std::string> expected);
+    Token require(std::initializer_list<std::string> expected);
 
     void setFlags();
 

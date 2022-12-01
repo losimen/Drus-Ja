@@ -27,13 +27,15 @@ Token SyntaxAnalyzer::match(std::initializer_list<std::string> expected)
 }
 
 
-void SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
+Token SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
 {
     Token token = match(expected);
 
     if (token.type.name == TokenTypes::UNDEFINED)
         throw std::runtime_error("Syntax error " + std::to_string(token.line) + " |p: " +
                                  std::to_string(token.pos) + ": expected " + *expected.begin());
+
+    return token;
 }
 
 
@@ -42,55 +44,77 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
     std::unique_ptr<INode> root = ASTFactory::createStatementNode();
     StatementNode *child = dynamic_cast<StatementNode *>(root.get());
 
-    while (pos < tokens.size())
-    {
-        setFlags();
-        std::unique_ptr<INode> codeStringNode;
-        if (isProgram && !isVar && !isStart && !isFinish)
-        {
-            // parsing program name
-            Token programName = match({TokenTypes::VARIABLE});
+    if (tokens.empty())
+        return root;
 
-            if (programName.type.name == TokenTypes::UNDEFINED)
-                throw std::runtime_error("Syntax error " + std::to_string(programName.line) + " |p: " +
-                                         std::to_string(programName.pos) + ": expected program name");
+    // check if program name and var block is present
+    if (tokens[0].type.name == TokenTypes::PROGRAM)
+    {
+        pos++;
+        Token programName = require({TokenTypes::VARIABLE});
+        child->nodes.push_back(ASTFactory::createProgramNameNode(programName));
+        require({TokenTypes::SEMICOLON});
+
+        require({TokenTypes::VARBLOCK});
+        require({TokenTypes::SEMICOLON});
+        isVar = true;
+    }
+
+    while (pos < tokens.size() && !isFinish)
+    {
+        std::unique_ptr<INode> codeStringNode;
+
+        if (isVar && !isStart && !isFinish)
+        {
+            // parsing variable declaration
+            if (match({TokenTypes::START}).type.name == TokenTypes::START)
             {
-                codeStringNode = ASTFactory::createProgramNameNode(programName);
+                require({TokenTypes::SEMICOLON});
+                isStart = !isStart;
+                continue;
             }
+
+            if (match({TokenTypes::DATATYPE}).type.name == TokenTypes::UNDEFINED)
+                throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + " |p: " +
+                                         std::to_string(tokens[pos].pos) + ": expected data type");
+
+            Token variable = match({TokenTypes::VARIABLE});
+            if (variable.type.name == TokenTypes::UNDEFINED)
+                throw std::runtime_error("Syntax error " + std::to_string(variable.line) + " |p: " +
+                                         std::to_string(variable.pos) + ": expected variable name");
+
+            codeStringNode = ASTFactory::createVariableNode(variable);
+            require({TokenTypes::SEMICOLON});
         }
-        else if (isProgram && isVar && !isStart && !isFinish)
+        else if (isVar && isStart && !isFinish)
         {
-            std::cout << "Var block" << std::endl;
-        }
-        else if (isProgram && isVar && isStart && !isFinish)
-        {
-            ;
-        }
-        else if (isProgram && isVar && isStart && !isFinish)
-        {
-            ;
+            // parsing main block
+            if (match({TokenTypes::FINISH}).type.name == TokenTypes::FINISH)
+            {
+                require({TokenTypes::SEMICOLON});
+                isFinish = !isFinish;
+                continue;
+            }
+
+            codeStringNode = parseMainBlock();
+            require({TokenTypes::SEMICOLON});
         }
         else
         {
             throw std::runtime_error("Syntax error: invalid program structure");
         }
 
-//        codeStringNode = parseMainBlock();
-        require({TokenTypes::SEMICOLON});
         child->add(codeStringNode);
     }
 
-//    if (isFinish)
-//    {
-//        return root;
-//    }
-//    else
-//    {
-//        throw std::runtime_error("Syntax error: expected finish");
-//    }
-
-    return root;
-
+    if (isFinish)
+    {
+        return root;
+    }
+    else
+    {
+        throw std::runtime_error("Syntax error: expected finish");
+    }
 }
 
 
@@ -181,22 +205,22 @@ void SyntaxAnalyzer::setFlags()
 {
     if (tokens[pos].type.name == TokenTypes::PROGRAM)
     {
-        isProgram = true;
+        isProgram = !isProgram;
         pos += 1;
     }
-    else if (tokens[pos].type.name == TokenTypes::VAR)
+    else if (tokens[pos].type.name == TokenTypes::VARBLOCK)
     {
-        isVar = true;
+        isVar = !isVar;
         pos += 1;
     }
     else if (tokens[pos].type.name == TokenTypes::START)
     {
-        isStart = true;
+        isStart = !isStart;
         pos += 1;
     }
     else if (tokens[pos].type.name == TokenTypes::FINISH)
     {
-        isFinish = true;
+        isFinish = !isFinish;
         pos += 1;
     }
 }

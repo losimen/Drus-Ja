@@ -9,7 +9,7 @@ using namespace TokenTypes;
 TokenList TokenTypeList::tokenTypeList
 {
         TokenType(PROGRAM, "Program"),
-        TokenType(VAR, "Var"),
+        TokenType(VARBLOCK, "Var"),
         TokenType(START, "Start"),
         TokenType(FINISH, "Finish"),
         TokenType(INPUT, "Input"),

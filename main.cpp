@@ -75,8 +75,8 @@ int main() {
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
     StatementNode *child = dynamic_cast<StatementNode *>(root.get());
 
-//    for (auto &node: child->nodes)
-//        printTreeElem(node);
+    for (auto &node: child->nodes)
+        printTreeElem(node);
 
     return 0;
 }
