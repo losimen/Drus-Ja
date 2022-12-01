@@ -16,7 +16,7 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(OUTPUT, "Output"),
         TokenType(VARIABLE, "[a-z]*"),
         TokenType(NUMBER, "^-?[0-9]\\d*"),
-        TokenType(ASSIGMENT, "->"),
+        TokenType(ASSIGNMENT, "->"),
         TokenType(SEMICOLON, ";"),
         TokenType(STARTCYCLE, "For"),
         TokenType(ENDCYCLE, "DownTo"),

@@ -12,7 +12,7 @@ struct StatementNode: public INode
 {
     std::vector<INode> nodes;
 
-    void addNode(INode node)
+    void add(INode node)
     {
         nodes.push_back(node);
     }

@@ -24,12 +24,6 @@ bool LexicalAnalyzer::nextToken()
                 isComment = false;
                 pos += 2;
 
-                token.line = line;
-                token.pos = oldPos;
-                token.type = TokenTypeList::getTokenType(TokenTypes::ENDCOMMENT);
-                token.value = code.substr(oldPos, pos - oldPos);
-
-                tokenList.push_back(token);
                 break;
             }
 
@@ -94,7 +88,6 @@ bool LexicalAnalyzer::nextToken()
             else if (token.type.name == TokenTypes::STARTCOMMENT)
             {
                 isComment = true;
-                tokenList.push_back(token);
             }
             else if (token.type.name == TokenTypes::SPACE)
             {

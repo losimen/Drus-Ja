@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "LexicalAnalyzer.h"
+#include "SyntaxAnalyzer.h"
 
 
 std::string readFile(const char *fName)
@@ -32,6 +33,14 @@ int main() {
 
     for (auto &token: tokens)
         std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+
+    SyntaxAnalyzer syntaxAnalyzer(tokens);
+    StatementNode root = syntaxAnalyzer.parseCode();
+
+    for (auto &node: root.nodes)
+    {
+        std::cout << root.nodes.size() << std::endl;
+    }
 
     return 0;
 }

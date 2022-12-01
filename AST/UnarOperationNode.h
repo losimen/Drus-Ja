@@ -7,7 +7,7 @@
 #include "../Token.h"
 
 
-struct UnarOperationNode
+struct UnarOperationNode: public INode
 {
     Token op;
     INode operand;

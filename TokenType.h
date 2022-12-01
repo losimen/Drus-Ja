@@ -18,7 +18,7 @@ namespace TokenTypes
     const std::string FINISH = "FINISH";
     const std::string INPUT = "INPUT";
     const std::string OUTPUT = "OUTPUT";
-    const std::string ASSIGMENT = "ASSIGMENT";
+    const std::string ASSIGNMENT = "ASSIGMENT";
     const std::string SEMICOLON = "SEMICOLON";
     const std::string STARTCYCLE = "STARTCYCLE";
     const std::string ENDCYCLE = "ENDCYCLE";

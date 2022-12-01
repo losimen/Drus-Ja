@@ -8,7 +8,7 @@
  */
 struct INode
 {
-
+    virtual ~INode() = default;
 };
 
 
