@@ -7,12 +7,7 @@
 #include <iostream>
 
 #include "Token.h"
-
-#include "AST/StatementNode.h"
-#include "AST/VariableNode.h"
-#include "AST/NumberNode.h"
-#include "AST/BinOperationNode.h"
-#include "AST/UnarOperationNode.h"
+#include "AST/ASTFactory.h"
 
 
 class SyntaxAnalyzer

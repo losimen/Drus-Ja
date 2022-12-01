@@ -44,7 +44,7 @@ StatementNode SyntaxAnalyzer::parseCode()
     {
         const auto codeStringNode = parseExpression();
         require({TokenTypes::SEMICOLON});
-        root.add(codeStringNode);
+//        root.add(codeStringNode);
     }
 
     return root;
@@ -62,8 +62,8 @@ INode SyntaxAnalyzer::parseExpression()
     if (assignOperator.type.name != TokenTypes::UNDEFINED)
     {
         const auto rightFormulaNode = parseFormula();
-        const auto binaryOperatorNode = BinOperationNode(assignOperator, variableNode, rightFormulaNode);
-        return binaryOperatorNode;
+//        const auto binaryOperatorNode = BinOperationNode(assignOperator, variableNode, rightFormulaNode);
+//        return binaryOperatorNode;
     }
 
     throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected expression");
@@ -77,7 +77,7 @@ INode SyntaxAnalyzer::parseFormula()
     if (op.type.name != TokenTypes::UNDEFINED)
     {
         const auto rightNode = parseParenthesis();
-        leftNode = BinOperationNode(op, leftNode, rightNode);
+//        leftNode = BinOperationNode(op, leftNode, rightNode);
         op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
     }
 

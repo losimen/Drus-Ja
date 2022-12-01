@@ -3,6 +3,8 @@
 #ifndef DRUS_JA_BINOPERATIONNODE_H
 #define DRUS_JA_BINOPERATIONNODE_H
 
+#include <memory>
+
 #include "INode.h"
 #include "../Token.h"
 
@@ -10,13 +12,16 @@
 struct BinOperationNode: public INode
 {
     Token op;
-    INode leftOperand;
-    INode rightOperand;
+    std::unique_ptr<INode> leftOperand;
+    std::unique_ptr<INode> rightOperand;
 
-    BinOperationNode(const Token &op,
-                     const INode &leftOperand,
-                     const INode &rightOperand): op(op), leftOperand(leftOperand), rightOperand(rightOperand)
-                     {}
+    BinOperationNode() = delete;
+
+    BinOperationNode(const Token &op, std::unique_ptr<INode> &leftOperand, std::unique_ptr<INode> &rightOperand) :
+                                                                   op(op),
+                                                                   leftOperand(std::move(leftOperand)),
+                                                                   rightOperand(std::move(rightOperand))
+                                                                   {}
 };
 
 

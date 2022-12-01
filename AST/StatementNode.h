@@ -10,11 +10,11 @@
 
 struct StatementNode: public INode
 {
-    std::vector<INode> nodes;
+    std::vector<std::unique_ptr<INode>> nodes;
 
-    void add(INode node)
+    void add(std::unique_ptr<INode> &node)
     {
-        nodes.push_back(node);
+        nodes.push_back(std::move(node));
     }
 };
 
