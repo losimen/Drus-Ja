@@ -19,16 +19,16 @@ private:
     Token match(std::initializer_list<std::string> expected);
     Token require(std::initializer_list<std::string> expected);
 
-    INode parseExpression();
-    INode parseFormula();
-    INode parseVariableOrNumber();
-    INode parseParenthesis();
+    std::unique_ptr<INode> parseExpression();
+    std::unique_ptr<INode> parseFormula();
+    std::unique_ptr<INode> parseVariableOrNumber();
+    std::unique_ptr<INode> parseParenthesis();
 
 public:
     SyntaxAnalyzer() = delete;
     SyntaxAnalyzer(std::vector<Token> &tokens);
 
-    StatementNode parseCode();
+    std::unique_ptr<INode> parseCode();
 };
 
 

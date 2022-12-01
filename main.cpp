@@ -24,6 +24,39 @@ std::string readFile(const char *fName)
 }
 
 
+void printTreeElem(std::unique_ptr<INode> &node)
+{
+    if (node == nullptr)
+    {
+        std::cout << "nullptr" << std::endl;
+        return;
+    }
+
+    if (BinOperationNode *pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
+    {
+        if (pBinOperationNode->op.type.name == TokenTypes::ASSIGNMENT)
+        {
+            printTreeElem(pBinOperationNode->leftOperand);
+            std::cout << pBinOperationNode->op.type.name << " ";
+            printTreeElem(pBinOperationNode->rightOperand);
+            return;
+        }
+
+        printTreeElem(pBinOperationNode->leftOperand);
+        std::cout << pBinOperationNode->op.type.name << " ";
+        printTreeElem(pBinOperationNode->rightOperand);
+    }
+    else if (NumberNode *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
+    {
+        std::cout << pNumberNode->number.value << " ";
+    }
+    else if (VariableNode *pVariableNode = dynamic_cast<VariableNode*>(node.get()))
+    {
+        std::cout << pVariableNode->variable.value << " ";
+    }
+}
+
+
 int main() {
     // TODO: add negative numbers
     std::string fileBuffer = readFile("File.txt");
@@ -31,16 +64,15 @@ int main() {
     LexicalAnalyzer lexicalAnalyzer(fileBuffer);
     std::vector<Token> tokens = lexicalAnalyzer.analyze();
 
-    for (auto &token: tokens)
-        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+//    for (auto &token: tokens)
+//        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
 
     SyntaxAnalyzer syntaxAnalyzer(tokens);
-    StatementNode root = syntaxAnalyzer.parseCode();
+    std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
+    StatementNode *child = dynamic_cast<StatementNode *>(root.get());
 
-    for (auto &node: root.nodes)
-    {
-        std::cout << root.nodes.size() << std::endl;
-    }
+    for (auto &node: child->nodes)
+        printTreeElem(node);
 
     return 0;
 }

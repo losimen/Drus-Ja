@@ -4,7 +4,7 @@
 
 std::unique_ptr<INode> ASTFactory::createStatementNode()
 {
-    return std::unique_ptr<INode>();
+    return std::make_unique<StatementNode>();
 }
 
 

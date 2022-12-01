@@ -36,24 +36,25 @@ Token SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
     return token;
 }
 
-StatementNode SyntaxAnalyzer::parseCode()
+std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 {
-    auto root = StatementNode();
+    std::unique_ptr<INode> root = ASTFactory::createStatementNode();
+    StatementNode *child = dynamic_cast<StatementNode *>(root.get());
 
     while (pos < tokens.size())
     {
-        const auto codeStringNode = parseExpression();
+        auto codeStringNode = parseExpression();
         require({TokenTypes::SEMICOLON});
-//        root.add(codeStringNode);
+        child->add(codeStringNode);
     }
 
     return root;
 }
 
-INode SyntaxAnalyzer::parseExpression()
+std::unique_ptr<INode> SyntaxAnalyzer::parseExpression()
 {
     if (match({TokenTypes::VARIABLE}).type.name == TokenTypes::UNDEFINED)
-        throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected expression");
+        throw std::runtime_error("NOT READY");
 
     pos -= 1;
 
@@ -61,23 +62,24 @@ INode SyntaxAnalyzer::parseExpression()
     const auto assignOperator = match({TokenTypes::ASSIGNMENT});
     if (assignOperator.type.name != TokenTypes::UNDEFINED)
     {
-        const auto rightFormulaNode = parseFormula();
-//        const auto binaryOperatorNode = BinOperationNode(assignOperator, variableNode, rightFormulaNode);
-//        return binaryOperatorNode;
+        auto rightFormulaNode = parseFormula();
+        auto binaryOperatorNode = ASTFactory::createBinOperationNode(assignOperator, variableNode, rightFormulaNode);
+        return binaryOperatorNode;
     }
 
     throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected expression");
 }
 
 
-INode SyntaxAnalyzer::parseFormula()
+std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
 {
     auto leftNode = parseParenthesis();
     auto op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
+
     if (op.type.name != TokenTypes::UNDEFINED)
     {
-        const auto rightNode = parseParenthesis();
-//        leftNode = BinOperationNode(op, leftNode, rightNode);
+        auto rightNode = parseParenthesis();
+        leftNode = ASTFactory::createBinOperationNode(op, leftNode, rightNode);
         op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
     }
 
@@ -85,24 +87,25 @@ INode SyntaxAnalyzer::parseFormula()
 }
 
 
-INode SyntaxAnalyzer::parseVariableOrNumber()
+std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
 {
     const auto number = match({TokenTypes::NUMBER});
     if (number.type.name != TokenTypes::UNDEFINED)
-        return NumberNode(number);
+        return ASTFactory::createNumberNode(number);
 
     const auto variable = match({TokenTypes::VARIABLE});
     if (variable.type.name != TokenTypes::UNDEFINED)
-        return VariableNode(variable);
+        return ASTFactory::createVariableNode(variable);
 
     throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected variable or number");
 }
 
-INode SyntaxAnalyzer::parseParenthesis()
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseParenthesis()
 {
     if (match({TokenTypes::LPAREN}).type.name != TokenTypes::UNDEFINED)
     {
-        const auto node = parseFormula();
+        auto node = parseFormula();
         require({TokenTypes::RPAREN});
         return node;
     }
