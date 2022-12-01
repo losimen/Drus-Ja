@@ -83,7 +83,8 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
                 throw std::runtime_error("Syntax error " + std::to_string(variable.line) + " |p: " +
                                          std::to_string(variable.pos) + ": expected variable name");
 
-            codeStringNode = ASTFactory::createVariableNode(variable);
+            codeStringNode = parseVariableOrNumber();
+            codeStringNode = ASTFactory::createInitVariableNode(variable, codeStringNode);
             require({TokenTypes::SEMICOLON});
         }
         else if (isVar && isStart && !isFinish)

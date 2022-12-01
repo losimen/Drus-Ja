@@ -37,6 +37,11 @@ std::unique_ptr<INode> ASTFactory::createProgramNameNode(const Token &token)
     return std::make_unique<ProgramNameNode>(token);
 }
 
+std::unique_ptr<INode> ASTFactory::createInitVariableNode(const Token &token, std::unique_ptr<INode> &value)
+{
+    return std::make_unique<InitVariableNode>(token, value);
+}
+
 
 
 

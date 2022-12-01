@@ -48,7 +48,7 @@ void printTreeElem(std::unique_ptr<INode> &node)
     }
     else if (ProgramNameNode *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
     {
-        std::cout << "Program name: " << pProgramNameNode->programName.value << std::endl;
+        std::cout << "Program name: " << pProgramNameNode->programName.value;
     }
     else if (NumberNode *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
     {
@@ -57,6 +57,11 @@ void printTreeElem(std::unique_ptr<INode> &node)
     else if (VariableNode *pVariableNode = dynamic_cast<VariableNode*>(node.get()))
     {
         std::cout << pVariableNode->variable.value << " ";
+    }
+    else if (InitVariableNode *pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
+    {
+        std::cout << "INTEGER " << pInitVariableNode->token.value << " = ";
+        printTreeElem(pInitVariableNode->value);
     }
 }
 
@@ -76,7 +81,11 @@ int main() {
     StatementNode *child = dynamic_cast<StatementNode *>(root.get());
 
     for (auto &node: child->nodes)
+    {
         printTreeElem(node);
+        std::cout << std::endl;
+    }
+
 
     return 0;
 }

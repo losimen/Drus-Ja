@@ -127,6 +127,6 @@ std::vector<Token> LexicalAnalyzer::analyze()
         // std::cout << token->type.name << std::endl;
     }
 
-    std::cout << "Total amount of lines: " << line << std::endl;
+//    std::cout << "Total amount of lines: " << line << std::endl;
     return tokenList;
 }
