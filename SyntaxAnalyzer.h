@@ -16,10 +16,20 @@ private:
     std::vector<Token> &tokens;
     unsigned pos;
 
-    Token match(std::initializer_list<std::string> expected);
-    Token require(std::initializer_list<std::string> expected);
+    // flags for program structure
+    bool isProgram;
+    bool isVar;
+    bool isStart;
+    bool isFinish;
 
-    std::unique_ptr<INode> parseExpression();
+    Token match(std::initializer_list<std::string> expected);
+    void require(std::initializer_list<std::string> expected);
+
+    void setFlags();
+
+    std::unique_ptr<INode> parseVariable();
+    std::unique_ptr<INode> parseNumber();
+    std::unique_ptr<INode> parseMainBlock();
     std::unique_ptr<INode> parseFormula();
     std::unique_ptr<INode> parseVariableOrNumber();
     std::unique_ptr<INode> parseParenthesis();

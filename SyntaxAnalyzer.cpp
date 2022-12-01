@@ -27,15 +27,13 @@ Token SyntaxAnalyzer::match(std::initializer_list<std::string> expected)
 }
 
 
-Token SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
+void SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
 {
     Token token = match(expected);
 
     if (token.type.name == TokenTypes::UNDEFINED)
         throw std::runtime_error("Syntax error " + std::to_string(token.line) + " |p: " +
                                  std::to_string(token.pos) + ": expected " + *expected.begin());
-
-    return token;
 }
 
 
@@ -46,21 +44,61 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 
     while (pos < tokens.size())
     {
-        auto codeStringNode = parseExpression();
+        setFlags();
+        std::unique_ptr<INode> codeStringNode;
+        if (isProgram && !isVar && !isStart && !isFinish)
+        {
+            // parsing program name
+            Token programName = match({TokenTypes::VARIABLE});
+
+            if (programName.type.name == TokenTypes::UNDEFINED)
+                throw std::runtime_error("Syntax error " + std::to_string(programName.line) + " |p: " +
+                                         std::to_string(programName.pos) + ": expected program name");
+            {
+                codeStringNode = ASTFactory::createProgramNameNode(programName);
+            }
+        }
+        else if (isProgram && isVar && !isStart && !isFinish)
+        {
+            std::cout << "Var block" << std::endl;
+        }
+        else if (isProgram && isVar && isStart && !isFinish)
+        {
+            ;
+        }
+        else if (isProgram && isVar && isStart && !isFinish)
+        {
+            ;
+        }
+        else
+        {
+            throw std::runtime_error("Syntax error: invalid program structure");
+        }
+
+//        codeStringNode = parseMainBlock();
         require({TokenTypes::SEMICOLON});
         child->add(codeStringNode);
     }
 
+//    if (isFinish)
+//    {
+//        return root;
+//    }
+//    else
+//    {
+//        throw std::runtime_error("Syntax error: expected finish");
+//    }
+
     return root;
+
 }
 
 
-std::unique_ptr<INode> SyntaxAnalyzer::parseExpression()
+std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
 {
     if (match({TokenTypes::VARIABLE}).type.name == TokenTypes::UNDEFINED)
-        // TODO: parse print and read
+        // TODO: parse print, read, for
         throw std::runtime_error("NOT READY");
-
     pos -= 1;
 
     auto variableNode = parseVariableOrNumber();
@@ -92,6 +130,19 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
 }
 
 
+std::unique_ptr<INode> SyntaxAnalyzer::parseParenthesis()
+{
+    if (match({TokenTypes::LPAREN}).type.name != TokenTypes::UNDEFINED)
+    {
+        auto node = parseFormula();
+        require({TokenTypes::RPAREN});
+        return node;
+    }
+
+    return parseVariableOrNumber();
+}
+
+
 std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
 {
     const auto number = match({TokenTypes::NUMBER});
@@ -106,15 +157,46 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
 }
 
 
-std::unique_ptr<INode> SyntaxAnalyzer::parseParenthesis()
+std::unique_ptr<INode> SyntaxAnalyzer::parseVariable()
 {
-    if (match({TokenTypes::LPAREN}).type.name != TokenTypes::UNDEFINED)
-    {
-        auto node = parseFormula();
-        require({TokenTypes::RPAREN});
-        return node;
-    }
+    const auto variable = match({TokenTypes::VARIABLE});
+    if (variable.type.name != TokenTypes::UNDEFINED)
+        return ASTFactory::createVariableNode(variable);
 
-    return parseVariableOrNumber();
+    throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected variable");
 }
 
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseNumber()
+{
+    const auto number = match({TokenTypes::NUMBER});
+    if (number.type.name != TokenTypes::UNDEFINED)
+        return ASTFactory::createNumberNode(number);
+
+    throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected number");
+}
+
+
+void SyntaxAnalyzer::setFlags()
+{
+    if (tokens[pos].type.name == TokenTypes::PROGRAM)
+    {
+        isProgram = true;
+        pos += 1;
+    }
+    else if (tokens[pos].type.name == TokenTypes::VAR)
+    {
+        isVar = true;
+        pos += 1;
+    }
+    else if (tokens[pos].type.name == TokenTypes::START)
+    {
+        isStart = true;
+        pos += 1;
+    }
+    else if (tokens[pos].type.name == TokenTypes::FINISH)
+    {
+        isFinish = true;
+        pos += 1;
+    }
+}

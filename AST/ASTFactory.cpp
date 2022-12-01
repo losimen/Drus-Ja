@@ -32,6 +32,11 @@ std::unique_ptr<INode> ASTFactory::createUnarOperationNode(const Token &token, s
     return std::make_unique<UnarOperationNode>(token, operand);
 }
 
+std::unique_ptr<INode> ASTFactory::createProgramNameNode(const Token &token)
+{
+    return std::make_unique<ProgramNameNode>(token);
+}
+
 
 
 

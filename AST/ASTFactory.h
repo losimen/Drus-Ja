@@ -10,11 +10,14 @@
 #include "NumberNode.h"
 #include "BinOperationNode.h"
 #include "UnarOperationNode.h"
+#include "ProgramNameNode.h"
 
 
 class ASTFactory
 {
 public:
+    ASTFactory() = delete;
+
     static std::unique_ptr<INode> createStatementNode();
     static std::unique_ptr<INode> createVariableNode(const Token &token);
     static std::unique_ptr<INode> createNumberNode(const Token &token);
@@ -23,6 +26,7 @@ public:
                                                          std::unique_ptr<INode> &right);
     static std::unique_ptr<INode> createUnarOperationNode(const Token &token,
                                                           std::unique_ptr<INode> &operand);
+    static std::unique_ptr<INode> createProgramNameNode(const Token &token);
 
 };
 

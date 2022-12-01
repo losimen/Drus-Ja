@@ -11,6 +11,7 @@ struct NumberNode: public INode
 {
     Token number;
 
+    NumberNode() = delete;
     NumberNode(Token number)
     {
         this->number = number;
