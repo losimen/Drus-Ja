@@ -19,6 +19,7 @@ struct Token
     unsigned pos;
 
     Token();
+    Token(TokenType type, std::string value, unsigned line, unsigned row, unsigned pos);
 };
 
 

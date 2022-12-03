@@ -29,6 +29,8 @@ private:
 
     bool nextToken();
 
+    void makePriorityList();
+
 public:
     LexicalAnalyzer() = delete;
     LexicalAnalyzer(const std::string &code);

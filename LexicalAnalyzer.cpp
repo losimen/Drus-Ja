@@ -13,9 +13,7 @@ bool LexicalAnalyzer::nextToken()
     if (isComment)
     {
         Token token;
-
         token.line = line;
-        unsigned oldPos = pos;
 
         while (code[pos] != '\n')
         {
@@ -121,12 +119,29 @@ std::vector<Token> LexicalAnalyzer::analyze()
     row = 1;
 
     while (nextToken())
+    { }
+    makePriorityList();
+
+    return tokenList;
+}
+
+void LexicalAnalyzer::makePriorityList()
+{
+    std::vector<unsigned> mulDivTokens;
+
+    for (auto it = tokenList.begin(); it < tokenList.end(); ++it)
     {
-        // For logging:
-        // auto token = tokenList.end() - 1;
-        // std::cout << token->type.name << std::endl;
+        if (it->type.name == TokenTypes::MULTIPLY || it->type.name == TokenTypes::DIVIDE)
+        {
+            mulDivTokens.push_back(std::distance(tokenList.begin(), it));
+        }
     }
 
-//    std::cout << "Total amount of lines: " << line << std::endl;
-    return tokenList;
+    unsigned offset = 0;
+    for (auto &index: mulDivTokens)
+    {
+        tokenList.insert(tokenList.begin() + index - 1 + offset, Token(TokenType(TokenTypeList::getTokenType(TokenTypes::LPAREN)), "(", 0, 0, 0));
+        tokenList.insert(tokenList.begin() + index + 3 + offset, Token(TokenType(TokenTypeList::getTokenType(TokenTypes::RPAREN)), ")", 0, 0, 0));
+        offset += 2;
+    }
 }

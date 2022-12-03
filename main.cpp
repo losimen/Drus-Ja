@@ -41,10 +41,13 @@ void printTreeElem(std::unique_ptr<INode> &node)
             printTreeElem(pBinOperationNode->rightOperand);
             return;
         }
-
+        // 2 + 4 * 2 + 4 + 2
+        std::cout << "( ";
         printTreeElem(pBinOperationNode->leftOperand);
         std::cout << pBinOperationNode->op.type.name << " ";
         printTreeElem(pBinOperationNode->rightOperand);
+        std::cout << " ) ";
+
     }
     else if (ProgramNameNode *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
     {
@@ -71,10 +74,12 @@ int main() {
     std::string fileBuffer = readFile("File.txt");
 
     LexicalAnalyzer lexicalAnalyzer(fileBuffer);
+
     std::vector<Token> tokens = lexicalAnalyzer.analyze();
 
-//    for (auto &token: tokens)
-//        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+
+    for (auto &token: tokens)
+        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
 
     SyntaxAnalyzer syntaxAnalyzer(tokens);
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
