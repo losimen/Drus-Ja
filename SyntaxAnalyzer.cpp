@@ -74,22 +74,12 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
                 continue;
             }
 
-            if (match({TokenTypes::DATATYPE}).type.name == TokenTypes::UNDEFINED)
-                throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + " |p: " +
-                                         std::to_string(tokens[pos].pos) + ": expected data type");
-
-            Token variable = match({TokenTypes::VARIABLE});
-            if (variable.type.name == TokenTypes::UNDEFINED)
-                throw std::runtime_error("Syntax error " + std::to_string(variable.line) + " |p: " +
-                                         std::to_string(variable.pos) + ": expected variable name");
-
-            codeStringNode = parseVariableOrNumber();
-            codeStringNode = ASTFactory::createInitVariableNode(variable, codeStringNode);
+            codeStringNode = parseVariableBlock();
             require({TokenTypes::SEMICOLON});
         }
         else if (isVar && isStart && !isFinish)
         {
-            // parsing main block
+            // check whether end of program
             if (match({TokenTypes::FINISH}).type.name == TokenTypes::FINISH)
             {
                 require({TokenTypes::SEMICOLON});
@@ -182,46 +172,19 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
 }
 
 
-std::unique_ptr<INode> SyntaxAnalyzer::parseVariable()
+std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
 {
-    const auto variable = match({TokenTypes::VARIABLE});
-    if (variable.type.name != TokenTypes::UNDEFINED)
-        return ASTFactory::createVariableNode(variable);
+    std::unique_ptr<INode> codeStringNode;
 
-    throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected variable");
-}
+    if (match({TokenTypes::DATATYPE}).type.name == TokenTypes::UNDEFINED)
+        throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + " |p: " +
+                                 std::to_string(tokens[pos].pos) + ": expected data type");
 
+    Token variable = match({TokenTypes::VARIABLE});
+    if (variable.type.name == TokenTypes::UNDEFINED)
+        throw std::runtime_error("Syntax error " + std::to_string(variable.line) + " |p: " +
+                                 std::to_string(variable.pos) + ": expected variable name");
 
-std::unique_ptr<INode> SyntaxAnalyzer::parseNumber()
-{
-    const auto number = match({TokenTypes::NUMBER});
-    if (number.type.name != TokenTypes::UNDEFINED)
-        return ASTFactory::createNumberNode(number);
-
-    throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected number");
-}
-
-
-void SyntaxAnalyzer::setFlags()
-{
-    if (tokens[pos].type.name == TokenTypes::PROGRAM)
-    {
-        isProgram = !isProgram;
-        pos += 1;
-    }
-    else if (tokens[pos].type.name == TokenTypes::VARBLOCK)
-    {
-        isVar = !isVar;
-        pos += 1;
-    }
-    else if (tokens[pos].type.name == TokenTypes::START)
-    {
-        isStart = !isStart;
-        pos += 1;
-    }
-    else if (tokens[pos].type.name == TokenTypes::FINISH)
-    {
-        isFinish = !isFinish;
-        pos += 1;
-    }
+    codeStringNode = parseVariableOrNumber();
+    return ASTFactory::createInitVariableNode(variable, codeStringNode);
 }
