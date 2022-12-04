@@ -6,6 +6,7 @@
 
 #include "LexicalAnalyzer.h"
 #include "SyntaxAnalyzer.h"
+#include "CodeGenerator.h"
 
 
 std::string readFile(const char *fName)
@@ -32,7 +33,7 @@ void printTreeElem(std::unique_ptr<INode> &node)
         return;
     }
 
-    if (BinOperationNode *pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
+    if (auto *pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
     {
         if (pBinOperationNode->op.type.name == TokenTypes::ASSIGNMENT)
         {
@@ -48,24 +49,24 @@ void printTreeElem(std::unique_ptr<INode> &node)
         printTreeElem(pBinOperationNode->rightOperand);
         std::cout << " ) ";
     }
-    else if (UnarOperationNode *pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
+    else if (auto *pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
     {
         std::cout << pUnarOperationNode->op.type.name << " ";
         printTreeElem(pUnarOperationNode->operand);
     }
-    else if (ProgramNameNode *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
+    else if (auto *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
     {
         std::cout << "Program name: " << pProgramNameNode->programName.value;
     }
-    else if (NumberNode *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
+    else if (auto *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
     {
         std::cout << pNumberNode->number.value << " ";
     }
-    else if (VariableNode *pVariableNode = dynamic_cast<VariableNode*>(node.get()))
+    else if (auto *pVariableNode = dynamic_cast<VariableNode*>(node.get()))
     {
         std::cout << pVariableNode->variable.value << " ";
     }
-    else if (InitVariableNode *pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
+    else if (auto *pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
     {
         std::cout << "INTEGER " << pInitVariableNode->token.value << " = ";
         printTreeElem(pInitVariableNode->value);
@@ -75,7 +76,7 @@ void printTreeElem(std::unique_ptr<INode> &node)
 
 void printTree(std::unique_ptr<INode> &root)
 {
-    StatementNode *child = dynamic_cast<StatementNode *>(root.get());
+    auto *child = dynamic_cast<StatementNode *>(root.get());
     for (auto &node: child->nodes)
     {
         printTreeElem(node);
@@ -97,6 +98,9 @@ int main()
     SyntaxAnalyzer syntaxAnalyzer(tokens);
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
     printTree(root);
+
+    CodeGenerator codeGenerator;
+    codeGenerator.writeToFile("File.asm");
 
     return 0;
 }
