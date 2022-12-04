@@ -47,6 +47,7 @@ TokenList &TokenTypeList::getTokenTypeList()
     return tokenTypeList;
 }
 
+
 TokenType TokenTypeList::getTokenType(const std::string &name)
 {
     auto isInList = std::find_if(tokenTypeList.begin(), tokenTypeList.end(),
