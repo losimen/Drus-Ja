@@ -66,7 +66,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 
         if (isVar && !isStart && !isFinish)
         {
-            // parsing variable declaration
+            // check whether start block is present
             if (match({TokenTypes::START}).type.name == TokenTypes::START)
             {
                 require({TokenTypes::SEMICOLON});
@@ -112,8 +112,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
 {
     if (match({TokenTypes::VARIABLE}).type.name == TokenTypes::UNDEFINED)
-        // TODO: parse print, read, for
-        throw std::runtime_error("NOT READY");
+        return parseIO();
     pos -= 1;
 
     auto variableNode = parseVariableOrNumber();
@@ -187,4 +186,19 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
 
     codeStringNode = parseVariableOrNumber();
     return ASTFactory::createInitVariableNode(variable, codeStringNode);
+}
+
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseIO()
+{
+    std::unique_ptr<INode> node;
+
+    Token io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
+    if (io.type.name != TokenTypes::UNDEFINED)
+    {
+        auto operand = parseVariableOrNumber();
+        node = ASTFactory::createUnarOperationNode(io, operand);
+    }
+
+    return node;
 }
