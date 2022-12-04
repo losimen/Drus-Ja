@@ -165,9 +165,14 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
 
     const auto variable = match({TokenTypes::VARIABLE});
     if (variable.type.name != TokenTypes::UNDEFINED)
-        return ASTFactory::createVariableNode(variable);
+    {
+        if (semanticAnalyzer.isVariable(variable.value))
+            return ASTFactory::createVariableNode(variable);
+        else
+            throw std::runtime_error("Syntax error " + std::to_string(variable.line) + ": variable " + variable.value + " is not declared");
+    }
 
-    throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected variable or number");
+    throw std::runtime_error("Syntax error: " + std::to_string(tokens[pos].line) + ": expected variable or number");
 }
 
 
@@ -176,15 +181,17 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
     std::unique_ptr<INode> codeStringNode;
 
     if (match({TokenTypes::DATATYPE}).type.name == TokenTypes::UNDEFINED)
-        throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + " |p: " +
+        throw std::runtime_error("Syntax error: " + std::to_string(tokens[pos].line) + " |p: " +
                                  std::to_string(tokens[pos].pos) + ": expected data type");
 
     Token variable = match({TokenTypes::VARIABLE});
     if (variable.type.name == TokenTypes::UNDEFINED)
-        throw std::runtime_error("Syntax error " + std::to_string(variable.line) + " |p: " +
+        throw std::runtime_error("Syntax error: " + std::to_string(variable.line) + " |p: " +
                                  std::to_string(variable.pos) + ": expected variable name");
 
+    semanticAnalyzer.addVariable(variable.value);
     codeStringNode = parseVariableOrNumber();
+
     return ASTFactory::createInitVariableNode(variable, codeStringNode);
 }
 

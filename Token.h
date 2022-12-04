@@ -19,10 +19,7 @@ struct Token
     unsigned pos;
 
     Token();
-    Token(TokenType type, std::string value, unsigned line, unsigned row, unsigned pos);
+    Token(TokenType type, const std::string &value, unsigned line, unsigned row, unsigned pos);
 };
-
-
-
 
 #endif //DRUS_JA_TOKEN_H

@@ -9,7 +9,7 @@ Token::Token()
     pos = 0;
 }
 
-Token::Token(TokenType type, std::string value, unsigned int line, unsigned int row, unsigned int pos)
+Token::Token(TokenType type, const std::string &value, unsigned int line, unsigned int row, unsigned int pos)
 {
     this->type = type;
     this->value = value;

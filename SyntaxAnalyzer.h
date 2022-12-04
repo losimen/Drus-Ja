@@ -8,11 +8,13 @@
 
 #include "Token.h"
 #include "AST/ASTFactory.h"
+#include "SemanticAnalyzer.h"
 
 
 class SyntaxAnalyzer
 {
 private:
+    SemanticAnalyzer semanticAnalyzer;
     std::vector<Token> &tokens;
     unsigned pos;
 

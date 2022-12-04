@@ -73,25 +73,30 @@ void printTreeElem(std::unique_ptr<INode> &node)
 }
 
 
-int main() {
-    // TODO: add negative numbers
-    std::string fileBuffer = readFile("File.txt");
-
-    LexicalAnalyzer lexicalAnalyzer(fileBuffer);
-    std::vector<Token> tokens = lexicalAnalyzer.analyze();
-
-    for (auto &token: tokens)
-        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
-
-    SyntaxAnalyzer syntaxAnalyzer(tokens);
-    std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
+void printTree(std::unique_ptr<INode> &root)
+{
     StatementNode *child = dynamic_cast<StatementNode *>(root.get());
-
     for (auto &node: child->nodes)
     {
         printTreeElem(node);
         std::cout << std::endl;
     }
+}
+
+
+int main()
+{
+    std::string fileBuffer = readFile("File.txt");
+
+    LexicalAnalyzer lexicalAnalyzer(fileBuffer);
+    std::vector<Token> tokens = lexicalAnalyzer.analyze();
+
+//    for (auto &token: tokens)
+//        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+
+    SyntaxAnalyzer syntaxAnalyzer(tokens);
+    std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
+    printTree(root);
 
     return 0;
 }
