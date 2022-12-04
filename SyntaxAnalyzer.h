@@ -26,8 +26,6 @@ private:
     Token match(std::initializer_list<std::string> expected);
     Token require(std::initializer_list<std::string> expected);
 
-    std::unique_ptr<INode> parseVariable();
-    std::unique_ptr<INode> parseNumber();
     std::unique_ptr<INode> parseVariableBlock();
     std::unique_ptr<INode> parseMainBlock();
     std::unique_ptr<INode> parseFormula();

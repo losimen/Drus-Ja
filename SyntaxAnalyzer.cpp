@@ -189,6 +189,10 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
         throw std::runtime_error("Syntax error: " + std::to_string(variable.line) + " |p: " +
                                  std::to_string(variable.pos) + ": expected variable name");
 
+    if (semanticAnalyzer.isVariable(variable.value))
+        throw std::runtime_error("Syntax error: " + std::to_string(variable.line) + " |p: " +
+                                 std::to_string(variable.pos) + ": variable " + variable.value + " is already declared");
+
     semanticAnalyzer.addVariable(variable.value);
     codeStringNode = parseVariableOrNumber();
 

@@ -91,8 +91,8 @@ int main()
     LexicalAnalyzer lexicalAnalyzer(fileBuffer);
     std::vector<Token> tokens = lexicalAnalyzer.analyze();
 
-//    for (auto &token: tokens)
-//        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+    for (auto &token: tokens)
+        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
 
     SyntaxAnalyzer syntaxAnalyzer(tokens);
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
