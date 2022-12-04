@@ -20,7 +20,7 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(MULTIPLY, "Mul"),
         TokenType(DIVIDE, "Div"),
         TokenType(MOD, "Mod"),
-        TokenType(VARIABLE, "[a-z]*"),
+        TokenType(VARIABLE, "(?=^[A-Z])([a-z]|[A-Z]){6}"),
         TokenType(NUMBER, "^-?[0-9]\\d*"),
         TokenType(ASSIGNMENT, "->"),
         TokenType(SEMICOLON, ";"),
