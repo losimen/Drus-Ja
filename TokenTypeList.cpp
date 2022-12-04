@@ -1,6 +1,6 @@
 // Drus_Ja by losimen 29.11.2022
 
-
+#include <algorithm>
 #include "TokenTypeList.h"
 
 using namespace TokenTypes;
@@ -49,10 +49,18 @@ TokenList &TokenTypeList::getTokenTypeList()
 
 TokenType TokenTypeList::getTokenType(const std::string &name)
 {
-    // TODO: use stl
-    for (auto &tokenType: tokenTypeList)
-        if (tokenType.name == name)
-            return tokenType;
+    auto isInList = std::find_if(tokenTypeList.begin(), tokenTypeList.end(),
+                                 [&name](TokenType &str)
+                                 {
+                                     return name == str.name;
+                                 });
 
-    return TokenType();
+    if (isInList != tokenTypeList.end())
+    {
+        return *isInList;
+    }
+    else
+    {
+        return TokenType(UNDEFINED, "Undefined");
+    }
 }
