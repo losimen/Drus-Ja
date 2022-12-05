@@ -158,7 +158,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     }
     else if (auto *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
     {
-
+        // TODO: use program name ?
     }
     else if (auto *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
     {

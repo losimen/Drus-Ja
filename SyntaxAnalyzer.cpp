@@ -41,8 +41,8 @@ Token SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
 
 std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 {
-    std::unique_ptr<INode> root = ASTFactory::createStatementNode();
-    StatementNode *child = dynamic_cast<StatementNode *>(root.get());
+    auto root = ASTFactory::createStatementNode();
+    auto rootCasted = dynamic_cast<StatementNode *>(root.get());
 
     if (tokens.empty())
         return root;
@@ -52,7 +52,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
     {
         pos++;
         Token programName = require({TokenTypes::VARIABLE});
-        child->nodes.push_back(ASTFactory::createProgramNameNode(programName));
+        rootCasted->nodes.push_back(ASTFactory::createProgramNameNode(programName));
         require({TokenTypes::SEMICOLON});
 
         require({TokenTypes::VARBLOCK});
@@ -95,7 +95,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
             throw std::runtime_error("Syntax error: invalid program structure");
         }
 
-        child->add(codeStringNode);
+        rootCasted->add(codeStringNode);
     }
 
     if (isFinish)
@@ -111,9 +111,41 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 
 std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
 {
-    if (match({TokenTypes::VARIABLE}).type.name == TokenTypes::UNDEFINED)
-        return parseIO();
-    pos -= 1;
+    if (match({TokenTypes::INPUT, TokenTypes::OUTPUT, TokenTypes::STARTCYCLE}).type.name != TokenTypes::UNDEFINED)
+    {
+        pos -= 1;
+
+        auto io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
+        if (io.type.name != TokenTypes::UNDEFINED)
+        {
+            auto operand = parseVariableOrNumber();
+            return ASTFactory::createUnarOperationNode(io, operand);
+        }
+
+        auto stCycle = match({TokenTypes::STARTCYCLE});
+        auto stVarCycle = parseVariableOrNumber();
+        require({TokenTypes::SEMICOLON});
+
+        if (stCycle.type.name != TokenTypes::UNDEFINED)
+        {
+            std::cout << "found cycle" << std::endl;
+            while (tokens[pos].type.name != TokenTypes::ENDCYCLE)
+            {
+                if (pos > tokens.size())
+                    throw std::runtime_error("Syntax error undefined cycle");
+
+                auto root = ASTFactory::createStatementNode();
+                auto codeStringNode = parseMainBlock();
+
+                require({TokenTypes::SEMICOLON});
+                ((StatementNode*)(root.get()))->add(codeStringNode);
+            }
+
+            auto ndCycle = match({TokenTypes::ENDCYCLE});
+            auto ndVarCycle = parseVariableOrNumber();
+            require({TokenTypes::SEMICOLON});
+        }
+    }
 
     auto variableNode = parseVariableOrNumber();
     const auto assignOperator = match({TokenTypes::ASSIGNMENT});
@@ -205,11 +237,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseIO()
     std::unique_ptr<INode> node;
 
     Token io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
-    if (io.type.name != TokenTypes::UNDEFINED)
-    {
-        auto operand = parseVariableOrNumber();
-        node = ASTFactory::createUnarOperationNode(io, operand);
-    }
+
 
     return node;
 }
