@@ -134,8 +134,8 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         m_codeIterator = m_code.end();
         generateCodeNode(pBinOperationNode->rightOperand);
 
-        addLineToSection("pop eax", Sections::CODE);
         addLineToSection("pop ebx", Sections::CODE);
+        addLineToSection("pop eax", Sections::CODE);
         addLineToSection(opStr + " eax, ebx", Sections::CODE);
         addLineToSection("push eax", Sections::CODE);
     }

@@ -38,7 +38,6 @@ namespace TokenTypes
     const std::string NOT = "NOT";
     const std::string DATATYPE = "DATATYPE";
     const std::string STARTCOMMENT = "StartComment";
-    const std::string CONTENTCOMMENT = "ContentComment";
     const std::string ENDCOMMENT = "EndComment";
     const std::string NEWLINE = "NEWLINE";
     const std::string SPACE = "SPACE";
