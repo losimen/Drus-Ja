@@ -98,43 +98,46 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
 
     if (auto *pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
     {
+        std::string opStr;
         if (pBinOperationNode->op.type.name == TokenTypes::ASSIGNMENT)
         {
-            addLineToSection(";==ASSIG", Sections::DATA);
             auto variable = (VariableNode*)(pBinOperationNode->leftOperand.get());
 
             generateCodeNode(pBinOperationNode->rightOperand);
 
             addLineToSection("pop eax", Sections::CODE);
             addLineToSection("mov " + variable->variable.value + ", eax", Sections::CODE);
+
+            return;
         }
         else if (pBinOperationNode->op.type.name == TokenTypes::PLUS)
         {
-            m_codeIterator = m_code.end();
-            generateCodeNode(pBinOperationNode->leftOperand);
-
-            m_codeIterator = m_code.end();
-            generateCodeNode(pBinOperationNode->rightOperand);
-
-            addLineToSection("pop eax", Sections::CODE);
-            addLineToSection("pop ebx", Sections::CODE);
-            addLineToSection("add eax, ebx", Sections::CODE);
-            addLineToSection("push eax", Sections::CODE);
+            opStr = "add";
         }
         else if (pBinOperationNode->op.type.name == TokenTypes::MULTIPLY)
         {
-            m_codeIterator = m_code.end();
-            generateCodeNode(pBinOperationNode->leftOperand);
-
-            m_codeIterator = m_code.end();
-            generateCodeNode(pBinOperationNode->rightOperand);
-
-            addLineToSection("pop eax", Sections::CODE);
-            addLineToSection("pop ebx", Sections::CODE);
-            addLineToSection("imul eax, ebx", Sections::CODE);
-            addLineToSection("push eax", Sections::CODE);
+            opStr = "imul";
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::MINUS)
+        {
+            // TODO: result loses -
+            opStr = "sub";
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::DIVIDE)
+        {
+            opStr = "idiv";
         }
 
+        m_codeIterator = m_code.end();
+        generateCodeNode(pBinOperationNode->leftOperand);
+
+        m_codeIterator = m_code.end();
+        generateCodeNode(pBinOperationNode->rightOperand);
+
+        addLineToSection("pop eax", Sections::CODE);
+        addLineToSection("pop ebx", Sections::CODE);
+        addLineToSection(opStr + " eax, ebx", Sections::CODE);
+        addLineToSection("push eax", Sections::CODE);
     }
     else if (auto *pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
     {
