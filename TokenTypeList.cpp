@@ -62,6 +62,6 @@ TokenType TokenTypeList::getTokenType(const std::string &name)
     }
     else
     {
-        return TokenType(UNDEFINED, "Undefined");
+        return {UNDEFINED, "Undefined"};
     }
 }
