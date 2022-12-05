@@ -36,6 +36,7 @@ void CodeGenerator::generateHeader()
     m_code.emplace_back("start:");
     m_code.emplace_back(";>--CODE SECTION--<");
     m_code.emplace_back("");
+    m_code.emplace_back("push 0");
     m_code.emplace_back("call ExitProcess");
     m_code.emplace_back("end start");
 }
@@ -99,13 +100,41 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     {
         if (pBinOperationNode->op.type.name == TokenTypes::ASSIGNMENT)
         {
-//            printTreeElem(pBinOperationNode->leftOperand);
-//            printTreeElem(pBinOperationNode->rightOperand);
-            return;
+            addLineToSection(";==ASSIG", Sections::DATA);
+            auto variable = (VariableNode*)(pBinOperationNode->leftOperand.get());
+
+            generateCodeNode(pBinOperationNode->rightOperand);
+
+            addLineToSection("pop eax", Sections::CODE);
+            addLineToSection("mov " + variable->variable.value + ", eax", Sections::CODE);
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::PLUS)
+        {
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->leftOperand);
+
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->rightOperand);
+
+            addLineToSection("pop eax", Sections::CODE);
+            addLineToSection("pop ebx", Sections::CODE);
+            addLineToSection("add eax, ebx", Sections::CODE);
+            addLineToSection("push eax", Sections::CODE);
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::MULTIPLY)
+        {
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->leftOperand);
+
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->rightOperand);
+
+            addLineToSection("pop eax", Sections::CODE);
+            addLineToSection("pop ebx", Sections::CODE);
+            addLineToSection("imul eax, ebx", Sections::CODE);
+            addLineToSection("push eax", Sections::CODE);
         }
 
-//        printTreeElem(pBinOperationNode->leftOperand);
-//        printTreeElem(pBinOperationNode->rightOperand);
     }
     else if (auto *pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
     {
@@ -115,13 +144,6 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         }
         else if (pUnarOperationNode->op.type.name == TokenTypes::OUTPUT)
         {
-            /*
-             push [value]
-             push offset fmt
-             push offset buffer
-             call wsprintf
-             invoke StdOut, addr buffer
-             */
             addLineToSection("push ", Sections::CODE);
             generateCodeNode(pUnarOperationNode->operand);
             addLineToSection("push offset fmt", Sections::CODE);
@@ -137,11 +159,17 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     }
     else if (auto *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
     {
-        addTextToLastLine(pNumberNode->number.value);
+        if (m_codeIterator == m_code.end())
+            addLineToSection("push " + pNumberNode->number.value, Sections::CODE);
+        else
+            addTextToLastLine(pNumberNode->number.value);
     }
     else if (auto *pVariableNode = dynamic_cast<VariableNode*>(node.get()))
     {
-        addTextToLastLine(pVariableNode->variable.value);
+        if (m_codeIterator == m_code.end())
+            addLineToSection("push " + pVariableNode->variable.value, Sections::CODE);
+        else
+            addTextToLastLine(pVariableNode->variable.value);
     }
     else if (auto *pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
     {
