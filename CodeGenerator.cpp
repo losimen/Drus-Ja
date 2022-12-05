@@ -68,13 +68,13 @@ void CodeGenerator::addLineToSection(const std::string &line, Sections section)
      * put instead of section string our line string
      * and then put section string after our line string
      */
+
     m_codeIterator = std::find(m_code.begin(), m_code.end(), sectionStr);
     *m_codeIterator = line;
     ++m_codeIterator;
 
     if (m_codeIterator != m_code.end())
-        m_code.insert(m_codeIterator, sectionStr);
-    std::cout << "m3 "<< std::distance(m_code.begin(), m_codeIterator) << std::endl;
+        m_codeIterator = m_code.insert(m_codeIterator, sectionStr);
 }
 
 
@@ -84,7 +84,6 @@ void CodeGenerator::generateCode(std::unique_ptr<INode> &root)
     for (auto &node: child->nodes)
     {
         generateCodeNode(node);
-        m_code.emplace_back("");
     }
 }
 
@@ -123,17 +122,13 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
              call wsprintf
              invoke StdOut, addr buffer
              */
-            std::cout << std::endl << "Output: " << std::endl;
-            std::cout << std::distance(m_code.begin(), m_codeIterator) << std::endl;
             addLineToSection("push ", Sections::CODE);
-            std::cout << std::distance(m_code.begin(), m_codeIterator) << std::endl;
-
             generateCodeNode(pUnarOperationNode->operand);
-//            addLineToSection("push offset fmt", Sections::CODE);
-//            addLineToSection("push offset buffer", Sections::CODE);
-//            addLineToSection("call wsprintf", Sections::CODE);
-//            addLineToSection("invoke StdOut, addr buffer", Sections::CODE);
-//            addLineToSection("", Sections::CODE);
+            addLineToSection("push offset fmt", Sections::CODE);
+            addLineToSection("push offset buffer", Sections::CODE);
+            addLineToSection("call wsprintf", Sections::CODE);
+            addLineToSection("invoke StdOut, addr buffer", Sections::CODE);
+            addLineToSection("", Sections::CODE);
         }
     }
     else if (auto *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
@@ -162,6 +157,5 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
 
 void CodeGenerator::addTextToLastLine(const std::string &text)
 {
-//    std::cout << std::distance(m_code.begin(), m_codeIterator) << " " << *(m_codeIterator-1) << std::endl;
     *(m_codeIterator-1) += text;
 }
