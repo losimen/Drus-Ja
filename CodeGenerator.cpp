@@ -130,7 +130,6 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         }
         else if (pBinOperationNode->op.type.name == TokenTypes::MINUS)
         {
-            // TODO: result loses -
             opStr = "sub";
         }
         else if (pBinOperationNode->op.type.name == TokenTypes::DIVIDE)
@@ -163,7 +162,6 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
             addLineToSection("push offset buffer", Sections::CODE);
             addLineToSection("call wsprintf", Sections::CODE);
             addLineToSection("invoke StdOut, addr buffer", Sections::CODE);
-            addLineToSection("", Sections::CODE);
         }
     }
     else if (auto pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
@@ -187,7 +185,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     else if (auto pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
     {
         /*
-         * [variable_name] dd [value]
+         [variable_name] dd [value]
          */
         addLineToSection(pInitVariableNode->token.value, Sections::DATA);
         addTextToLastLine(" dd ");
