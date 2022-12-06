@@ -54,7 +54,7 @@ std::unique_ptr<INode> ASTFactory::createForNode()
 
 std::unique_ptr<INode> ASTFactory::createIfNode()
 {
-    return std::unique_ptr<INode>();
+    return std::make_unique<IfNode>();
 }
 
 

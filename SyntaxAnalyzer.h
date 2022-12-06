@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "Token.h"
+#include "AST/INode.h"
 #include "AST/ASTFactory.h"
 #include "SemanticAnalyzer.h"
 
@@ -28,12 +29,14 @@ private:
 
     std::unique_ptr<INode> parseVariableBlock();
     std::unique_ptr<INode> parseMainBlock();
-    std::unique_ptr<INode> parseFormula();
     std::unique_ptr<INode> parseVariableOrNumber();
-    std::unique_ptr<INode> parseParenthesis();
+    std::unique_ptr<INode> parseParenthesis(std::function<std::unique_ptr<INode> (SyntaxAnalyzer&)> parseExpr);
+    std::unique_ptr<INode> parseFormula();
+    std::unique_ptr<INode> parseCondition();
 
 public:
     SyntaxAnalyzer() = delete;
+
     SyntaxAnalyzer(std::vector<Token> &tokens);
 
     std::unique_ptr<INode> parseCode();
