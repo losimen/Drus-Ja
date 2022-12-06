@@ -3,4 +3,4 @@ project(Drus_Ja)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Drus_Ja main.cpp TokenType.cpp TokenTypeList.cpp LexicalAnalyzer.cpp SyntaxAnalyzer.cpp Token.cpp AST/ASTFactory.cpp SemanticAnalyzer.cpp SemanticAnalyzer.h CodeGenerator.cpp CodeGenerator.h AST/ForNode.h AST/IBlockNode.h)
+add_executable(Drus_Ja main.cpp TokenType.cpp TokenTypeList.cpp LexicalAnalyzer.cpp SyntaxAnalyzer.cpp Token.cpp AST/ASTFactory.cpp SemanticAnalyzer.cpp CodeGenerator.cpp AST/IfNode.h)

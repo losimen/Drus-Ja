@@ -13,6 +13,7 @@
 #include "ProgramNameNode.h"
 #include "InitVariableNode.h"
 #include "ForNode.h"
+#include "IfNode.h"
 
 
 class ASTFactory
@@ -32,6 +33,7 @@ public:
     static std::unique_ptr<INode> createInitVariableNode(const Token &token,
                                                          std::unique_ptr<INode> &value);
     static std::unique_ptr<INode> createForNode();
+    static std::unique_ptr<INode> createIfNode();
 
 };
 

@@ -153,28 +153,28 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
         }
 
         // Parse if statement
-//        auto stIf = match({TokenTypes::STARTIF});
-//        if (stIf.type.name != TokenTypes::UNDEFINED)
-//        {
-//            auto root = ASTFactory::createIfNode();
-//            auto rootCasted = dynamic_cast<IfNode*>(root.get());
-//
+        auto stIf = match({TokenTypes::STARTIF});
+        if (stIf.type.name != TokenTypes::UNDEFINED)
+        {
+            auto root = ASTFactory::createIfNode();
+            auto rootCasted = dynamic_cast<IfNode*>(root.get());
+
 //            rootCasted->condition = parseCondition();
-//
-//            while (tokens[pos].type.name != TokenTypes::ENDIF)
-//            {
-//                if (pos > tokens.size())
-//                    throw std::runtime_error("Syntax error undefined if");
-//
-//                auto codeStringNode = parseMainBlock();
-//                require({TokenTypes::SEMICOLON});
-//                rootCasted->add(codeStringNode);
-//            }
-//
-//            // root assign...
-//            auto ndIf = match({TokenTypes::ENDIF});
-//            return root;
-//        }
+
+            while (tokens[pos].type.name != TokenTypes::ENDIF)
+            {
+                if (pos > tokens.size())
+                    throw std::runtime_error("Syntax error undefined if");
+
+                auto codeStringNode = parseMainBlock();
+                require({TokenTypes::SEMICOLON});
+                rootCasted->add(codeStringNode);
+            }
+
+            // root assign...
+            auto ndIf = match({TokenTypes::ENDIF});
+            return root;
+        }
     }
 
     // Parse assignment statement

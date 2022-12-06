@@ -27,24 +27,34 @@ std::unique_ptr<INode> ASTFactory::createBinOperationNode(const Token &token,
     return std::make_unique<BinOperationNode>(token, left, right);
 }
 
+
 std::unique_ptr<INode> ASTFactory::createUnarOperationNode(const Token &token, std::unique_ptr<INode> &operand)
 {
     return std::make_unique<UnarOperationNode>(token, operand);
 }
+
 
 std::unique_ptr<INode> ASTFactory::createProgramNameNode(const Token &token)
 {
     return std::make_unique<ProgramNameNode>(token);
 }
 
+
 std::unique_ptr<INode> ASTFactory::createInitVariableNode(const Token &token, std::unique_ptr<INode> &value)
 {
     return std::make_unique<InitVariableNode>(token, value);
 }
 
+
 std::unique_ptr<INode> ASTFactory::createForNode()
 {
     return std::make_unique<ForNode>();
+}
+
+
+std::unique_ptr<INode> ASTFactory::createIfNode()
+{
+    return std::unique_ptr<INode>();
 }
 
 
