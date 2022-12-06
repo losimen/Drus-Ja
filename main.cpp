@@ -75,14 +75,29 @@ void printTreeElem(std::unique_ptr<INode> &node)
     }
     else if (auto pForNode = dynamic_cast<ForNode*>(node.get()))
     {
-        std::cout << "Start for ";
-        printTreeElem(pForNode->stValue);
-        std::cout << std::endl;
+        static int forCounter = 1;
+        std::cout << "---FOR- " << forCounter++;
 
+        printTreeElem(pForNode->stValue);
         printTree(node);
 
-        std::cout << "End for ";
+        std::cout << "---END FOR " << forCounter;
         printTreeElem(pForNode->ndValue);
+    }
+    else if (auto pIfNode = dynamic_cast<IfNode*>(node.get()))
+    {
+        static int ifCounter = 1;
+        std::cout << "---IF " << ifCounter++ << " ";
+        printTreeElem(pIfNode->condition);
+        std::cout << std::endl;
+
+        printTree(pIfNode->ifBody);
+
+        if (pIfNode->elseBody != nullptr)
+        {
+            std::cout << "---ELSE " << ifCounter;
+            printTree(pIfNode->elseBody);
+        }
     }
 }
 
@@ -116,9 +131,9 @@ int main()
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
     printTree(root);
 
-    CodeGenerator codeGenerator;
-    codeGenerator.generateCode(root);
-    codeGenerator.writeToFile("File.asm");
+//    CodeGenerator codeGenerator;
+//    codeGenerator.generateCode(root);
+//    codeGenerator.writeToFile("File.asm");
 
     return 0;
 }
