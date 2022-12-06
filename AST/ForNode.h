@@ -6,22 +6,14 @@
 #include <utility>
 #include <vector>
 
-#include "INode.h"
+#include "IBlockNode.h"
 #include "../Token.h"
 
 
-struct ForNode: public INode
+struct ForNode: public IBlockNode
 {
-    std::vector<std::unique_ptr<INode>> nodes;
     std::unique_ptr<INode> stValue;
     std::unique_ptr<INode> ndValue;
-
-    void add(std::unique_ptr<INode> &node)
-    {
-        nodes.push_back(std::move(node));
-    }
-
-    ForNode() = default;
 };
 
 

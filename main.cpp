@@ -89,22 +89,15 @@ void printTreeElem(std::unique_ptr<INode> &node)
 
 void printTree(std::unique_ptr<INode> &root)
 {
-    if (auto child = dynamic_cast<StatementNode*>(root.get()))
-    {
-        for (auto &node : child->nodes)
-        {
-            printTreeElem(node);
-            std::cout << std::endl;
-        }
-    }
+    auto iBlock = dynamic_cast<IBlockNode*>(root.get());
 
-    if (auto child = dynamic_cast<ForNode*>(root.get()))
+    if (iBlock == nullptr)
+        throw std::runtime_error("iBlock == nullptr");
+
+    for (auto &node : iBlock->nodes)
     {
-        for (auto &node : child->nodes)
-        {
-            printTreeElem(node);
-            std::cout << std::endl;
-        }
+        printTreeElem(node);
+        std::cout << std::endl;
     }
 }
 
@@ -116,8 +109,8 @@ int main()
     LexicalAnalyzer lexicalAnalyzer(fileBuffer);
     std::vector<Token> tokens = lexicalAnalyzer.analyze();
 
-//    for (auto &token: tokens)
-//        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+    for (auto &token: tokens)
+        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
 
     SyntaxAnalyzer syntaxAnalyzer(tokens);
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();

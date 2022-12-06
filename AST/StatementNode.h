@@ -5,17 +5,12 @@
 
 #include <vector>
 
-#include "INode.h"
+#include "IBlockNode.h"
 
 
-struct StatementNode: public INode
+struct StatementNode: public IBlockNode
 {
-    std::vector<std::unique_ptr<INode>> nodes;
 
-    void add(std::unique_ptr<INode> &node)
-    {
-        nodes.push_back(std::move(node));
-    }
 };
 
 

@@ -22,6 +22,10 @@ namespace TokenTypes
     const std::string SEMICOLON = "SEMICOLON";
     const std::string STARTCYCLE = "STARTCYCLE";
     const std::string ENDCYCLE = "ENDCYCLE";
+    const std::string STARTIF = "STARTIF";
+    const std::string STARTELSE = "STARTELSE";
+    const std::string ENDIF = "ENDIF";
+    const std::string ENDELSE = "ENDELSE";
     const std::string PLUS = "PLUS";
     const std::string MINUS = "MINUS";
     const std::string MULTIPLY = "MULTIPLY";

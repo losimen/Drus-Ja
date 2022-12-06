@@ -197,16 +197,12 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         forCounter++;
 
         /*
-            loop_1_st:
+        loop_1_st:
             mov eax, VaarrA
             cmp eax, VaarrB
             je loop_1_nd
 
-            push VaarrA
-            push offset fmt
-            push offset buffer
-            call wsprintf
-            invoke StdOut, addr buffer
+            // program code
 
             dec VaarrA
             jmp loop_1_st
