@@ -81,10 +81,20 @@ void CodeGenerator::addLineToSection(const std::string &line, Sections section)
 
 void CodeGenerator::generateCode(std::unique_ptr<INode> &root)
 {
-    auto *child = dynamic_cast<StatementNode *>(root.get());
-    for (auto &node: child->nodes)
+    if (auto child = dynamic_cast<StatementNode *>(root.get()))
     {
-        generateCodeNode(node);
+        for (auto &node: child->nodes)
+        {
+            generateCodeNode(node);
+        }
+    }
+
+    if (auto child = dynamic_cast<ForNode*>(root.get()))
+    {
+        for (auto &node: child->nodes)
+        {
+            generateCodeNode(node);
+        }
     }
 }
 
@@ -96,7 +106,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         return;
     }
 
-    if (auto *pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
+    if (auto pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
     {
         std::string opStr;
         if (pBinOperationNode->op.type.name == TokenTypes::ASSIGNMENT)
@@ -139,7 +149,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addLineToSection(opStr + " eax, ebx", Sections::CODE);
         addLineToSection("push eax", Sections::CODE);
     }
-    else if (auto *pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
+    else if (auto pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
     {
         if (pUnarOperationNode->op.type.name == TokenTypes::INPUT)
         {
@@ -156,25 +166,25 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
             addLineToSection("", Sections::CODE);
         }
     }
-    else if (auto *pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
+    else if (auto pProgramNameNode = dynamic_cast<ProgramNameNode*>(node.get()))
     {
         // TODO: use program name ?
     }
-    else if (auto *pNumberNode = dynamic_cast<NumberNode*>(node.get()))
+    else if (auto pNumberNode = dynamic_cast<NumberNode*>(node.get()))
     {
         if (m_codeIterator == m_code.end())
             addLineToSection("push " + pNumberNode->number.value, Sections::CODE);
         else
             addTextToLastLine(pNumberNode->number.value);
     }
-    else if (auto *pVariableNode = dynamic_cast<VariableNode*>(node.get()))
+    else if (auto pVariableNode = dynamic_cast<VariableNode*>(node.get()))
     {
         if (m_codeIterator == m_code.end())
             addLineToSection("push " + pVariableNode->variable.value, Sections::CODE);
         else
             addTextToLastLine(pVariableNode->variable.value);
     }
-    else if (auto *pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
+    else if (auto pInitVariableNode = dynamic_cast<InitVariableNode*>(node.get()))
     {
         /*
          * [variable_name] dd [value]
@@ -183,6 +193,46 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addTextToLastLine(" dd ");
         generateCodeNode(pInitVariableNode->value);
     }
+    else if (auto pForNode = dynamic_cast<ForNode*>(node.get()))
+    {
+        static unsigned forCounter = 0;
+        forCounter++;
+
+        /*
+            loop_1_st:
+            mov eax, VaarrA
+            cmp eax, VaarrB
+            je loop_1_nd
+
+            push VaarrA
+            push offset fmt
+            push offset buffer
+            call wsprintf
+            invoke StdOut, addr buffer
+
+            dec VaarrA
+            jmp loop_1_st
+
+        loop_1_nd:
+            // end of loop
+         */
+
+        const std::string stVarName = ((VariableNode*)pForNode->stValue.get())->variable.value;
+
+        addLineToSection("loop_" + std::to_string(forCounter) + "_st:", Sections::CODE);
+        addLineToSection("mov eax, " + stVarName, Sections::CODE);
+        addLineToSection("cmp eax, ", Sections::CODE);
+        generateCodeNode(pForNode->ndValue);
+        addLineToSection("je loop_" + std::to_string(forCounter) + "_nd", Sections::CODE);
+
+        // code of the loop
+        generateCode(node);
+
+        addLineToSection("dec " + stVarName, Sections::CODE);
+        addLineToSection("jmp loop_" + std::to_string(forCounter) + "_st", Sections::CODE);
+        addLineToSection("loop_" + std::to_string(forCounter) + "_nd:", Sections::CODE);
+    }
+
 }
 
 
