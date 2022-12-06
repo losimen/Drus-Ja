@@ -156,8 +156,15 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
         auto stIf = match({TokenTypes::STARTIF});
         if (stIf.type.name != TokenTypes::UNDEFINED)
         {
+            bool isElse = false;
             auto root = ASTFactory::createIfNode();
             auto rootCasted = dynamic_cast<IfNode*>(root.get());
+
+            auto ifBody = ASTFactory::createIfBodyNode();
+            auto ifBodyCasted = dynamic_cast<IfBodyNode*>(ifBody.get());
+
+            auto elseBody = ASTFactory::createElseBodyNode();
+            auto elseBodyCasted = dynamic_cast<ElseBodyNode*>(elseBody.get());
 
             rootCasted->condition = parseCondition();
             require({TokenTypes::SEMICOLON});
@@ -169,7 +176,22 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
 
                 auto codeStringNode = parseMainBlock();
                 require({TokenTypes::SEMICOLON});
-                rootCasted->add(codeStringNode);
+
+                if (isElse)
+                {
+                    elseBodyCasted->add(codeStringNode);
+                }
+                else
+                {
+                    ifBodyCasted->add(codeStringNode);
+
+                    if (tokens[pos].type.name == TokenTypes::STARTELSE)
+                    {
+                        isElse = true;
+                        pos++;
+                        require({TokenTypes::SEMICOLON});
+                    }
+                }
             }
 
             // root assign
