@@ -14,6 +14,8 @@
 #include "InitVariableNode.h"
 #include "ForNode.h"
 #include "IfNode.h"
+#include "IfBodyNode.h"
+#include "ElseBodyNode.h"
 
 
 class ASTFactory
@@ -34,6 +36,8 @@ public:
                                                          std::unique_ptr<INode> &value);
     static std::unique_ptr<INode> createForNode();
     static std::unique_ptr<INode> createIfNode();
+    static std::unique_ptr<INode> createIfBodyNode();
+    static std::unique_ptr<INode> createElseBodyNode();
 
 };
 

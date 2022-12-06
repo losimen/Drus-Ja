@@ -58,5 +58,13 @@ std::unique_ptr<INode> ASTFactory::createIfNode()
 }
 
 
+std::unique_ptr<INode> ASTFactory::createIfBodyNode()
+{
+    return std::make_unique<IfBodyNode>();
+}
 
 
+std::unique_ptr<INode> ASTFactory::createElseBodyNode()
+{
+    return std::make_unique<ElseBodyNode>();
+}

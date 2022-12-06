@@ -3,12 +3,14 @@
 #ifndef DRUS_JA_IFNODE_H
 #define DRUS_JA_IFNODE_H
 
-#include "IBlockNode.h"
+#include "INode.h"
 
 
-struct IfNode: public IBlockNode
+struct IfNode: public INode
 {
     std::unique_ptr<INode> condition;
+    std::unique_ptr<INode> ifBody;
+    std::unique_ptr<INode> elseBody;
 };
 
 
