@@ -75,8 +75,9 @@ void printTreeElem(std::unique_ptr<INode> &node)
     }
     else if (auto pForNode = dynamic_cast<ForNode*>(node.get()))
     {
-        static int forCounter = 1;
-        std::cout << "---FOR- " << forCounter++;
+        static int forCounter = 0;
+        forCounter++;
+        std::cout << "---FOR- " << forCounter;
 
         printTreeElem(pForNode->stValue);
         printTree(node);
@@ -86,18 +87,25 @@ void printTreeElem(std::unique_ptr<INode> &node)
     }
     else if (auto pIfNode = dynamic_cast<IfNode*>(node.get()))
     {
-        static int ifCounter = 1;
-        std::cout << "---IF " << ifCounter++ << " ";
+        static int ifCounter = 0;
+        ifCounter++;
+
+        std::cout << "---IF " << ifCounter << " ";
         printTreeElem(pIfNode->condition);
         std::cout << std::endl;
 
         printTree(pIfNode->ifBody);
 
-        if (pIfNode->elseBody != nullptr)
+        if (auto pElseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
         {
-            std::cout << "---ELSE " << ifCounter;
-            printTree(pIfNode->elseBody);
+            if (!pElseBody->nodes.empty())
+            {
+                std::cout << "---ELSE " << ifCounter << " " << std::endl;
+                printTree(pIfNode->elseBody);
+            }
         }
+
+        std::cout << "---END IF " << ifCounter << std::endl;
     }
 }
 
