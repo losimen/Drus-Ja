@@ -167,6 +167,8 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
             auto elseBodyCasted = dynamic_cast<ElseBodyNode*>(elseBody.get());
 
             rootCasted->condition = parseCondition();
+            rootCasted->ifBody = std::move(ifBody);
+            rootCasted->elseBody = std::move(elseBody);
             require({TokenTypes::SEMICOLON});
 
             while (tokens[pos].type.name != TokenTypes::ENDIF)
