@@ -12,6 +12,7 @@
 #include "UnarOperationNode.h"
 #include "ProgramNameNode.h"
 #include "InitVariableNode.h"
+#include "ForNode.h"
 
 
 class ASTFactory
@@ -30,6 +31,7 @@ public:
     static std::unique_ptr<INode> createProgramNameNode(const Token &token);
     static std::unique_ptr<INode> createInitVariableNode(const Token &token,
                                                          std::unique_ptr<INode> &value);
+    static std::unique_ptr<INode> createForNode();
 
 };
 

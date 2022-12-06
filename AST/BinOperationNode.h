@@ -18,10 +18,10 @@ struct BinOperationNode: public INode
     BinOperationNode() = delete;
 
     BinOperationNode(const Token &op, std::unique_ptr<INode> &leftOperand, std::unique_ptr<INode> &rightOperand) :
-                                                                   op(op),
-                                                                   leftOperand(std::move(leftOperand)),
-                                                                   rightOperand(std::move(rightOperand))
-                                                                   {}
+                               op(op),
+                               leftOperand(std::move(leftOperand)),
+                               rightOperand(std::move(rightOperand))
+                               {}
 };
 
 

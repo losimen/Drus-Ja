@@ -31,7 +31,6 @@ private:
     std::unique_ptr<INode> parseFormula();
     std::unique_ptr<INode> parseVariableOrNumber();
     std::unique_ptr<INode> parseParenthesis();
-    std::unique_ptr<INode> parseIO();
 
 public:
     SyntaxAnalyzer() = delete;

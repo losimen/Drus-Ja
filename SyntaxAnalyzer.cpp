@@ -111,10 +111,12 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
 
 std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
 {
+    // Parse unary operations
     if (match({TokenTypes::INPUT, TokenTypes::OUTPUT, TokenTypes::STARTCYCLE}).type.name != TokenTypes::UNDEFINED)
     {
         pos -= 1;
 
+        // Parse input/output statement
         auto io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
         if (io.type.name != TokenTypes::UNDEFINED)
         {
@@ -122,31 +124,35 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
             return ASTFactory::createUnarOperationNode(io, operand);
         }
 
+        // Parse for loop statement
         auto stCycle = match({TokenTypes::STARTCYCLE});
-        auto stVarCycle = parseVariableOrNumber();
-        require({TokenTypes::SEMICOLON});
-
         if (stCycle.type.name != TokenTypes::UNDEFINED)
         {
-            std::cout << "found cycle" << std::endl;
+            auto root = ASTFactory::createForNode();
+            auto rootCasted = dynamic_cast<ForNode*>(root.get());
+
+            rootCasted->stValue = parseVariableOrNumber();
+            require({TokenTypes::SEMICOLON});
+
             while (tokens[pos].type.name != TokenTypes::ENDCYCLE)
             {
                 if (pos > tokens.size())
                     throw std::runtime_error("Syntax error undefined cycle");
 
-                auto root = ASTFactory::createStatementNode();
                 auto codeStringNode = parseMainBlock();
-
                 require({TokenTypes::SEMICOLON});
-                ((StatementNode*)(root.get()))->add(codeStringNode);
+                rootCasted->add(codeStringNode);
             }
 
+            // root assign...
             auto ndCycle = match({TokenTypes::ENDCYCLE});
-            auto ndVarCycle = parseVariableOrNumber();
-            require({TokenTypes::SEMICOLON});
+            rootCasted->ndValue = parseVariableOrNumber();
+
+            return root;
         }
     }
 
+    // Parse assignment statement
     auto variableNode = parseVariableOrNumber();
     const auto assignOperator = match({TokenTypes::ASSIGNMENT});
     if (assignOperator.type.name != TokenTypes::UNDEFINED)
@@ -229,15 +235,4 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
     codeStringNode = parseVariableOrNumber();
 
     return ASTFactory::createInitVariableNode(variable, codeStringNode);
-}
-
-
-std::unique_ptr<INode> SyntaxAnalyzer::parseIO()
-{
-    std::unique_ptr<INode> node;
-
-    Token io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
-
-
-    return node;
 }
