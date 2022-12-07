@@ -84,20 +84,14 @@ void CodeGenerator::addLineToSection(const std::string &line, Sections section)
 
 void CodeGenerator::generateCode(std::unique_ptr<INode> &root)
 {
-    if (auto child = dynamic_cast<StatementNode *>(root.get()))
-    {
-        for (auto &node: child->nodes)
-        {
-            generateCodeNode(node);
-        }
-    }
+    auto iBlock = dynamic_cast<IBlockNode*>(root.get());
 
-    if (auto child = dynamic_cast<ForNode*>(root.get()))
+    if (iBlock == nullptr)
+        throw std::runtime_error("iBlock == nullptr");
+
+    for (auto &node : iBlock->nodes)
     {
-        for (auto &node: child->nodes)
-        {
-            generateCodeNode(node);
-        }
+        generateCodeNode(node);
     }
 }
 
@@ -226,11 +220,20 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     }
     else if (auto pIfNode = dynamic_cast<IfNode*>(node.get()))
     {
-//        ifCounter++;
-//
-//        generateCodeNode(pIfNode->condition, currentForCounter, currentIfCounter);
-//        addLineToSection("if_" + std::to_string(currentIfCounter) + "_st", Sections::CODE);
+        ifCounter++;
 
+        generateCodeCondition(pIfNode->condition, currentIfCounter);
+
+        addLineToSection("if_" + std::to_string(currentIfCounter) + "_bd: ", Sections::CODE);
+        generateCode(pIfNode->ifBody);
+        addLineToSection("if_" + std::to_string(currentIfCounter) + "_nd: ", Sections::CODE);
+
+        // TODO: implement else
+        if (auto elseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
+        {
+            if (elseBody->nodes.empty())
+                return;
+        }
     }
 
 }
@@ -239,4 +242,34 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
 void CodeGenerator::addTextToLastLine(const std::string &text)
 {
     *(m_codeIterator-1) += text;
+}
+
+
+void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned currentIfCounter)
+{
+    if (auto pCondition = dynamic_cast<BinOperationNode*>(node.get()))
+    {
+        addLineToSection("pop ebx", Sections::CODE);
+        addLineToSection("pop eax", Sections::CODE);
+        addLineToSection("cmp eax, ebx", Sections::CODE);
+
+        if (pCondition->op.type.name == TokenTypes::EQUAL)
+        {
+            addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+        }
+        else if (pCondition->op.type.name == TokenTypes::NOTEQUAL)
+        {
+            addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+        }
+        else if (pCondition->op.type.name == TokenTypes::LESS)
+        {
+            addLineToSection("jl if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+        }
+        else if (pCondition->op.type.name == TokenTypes::GREATER)
+        {
+            addLineToSection("jg if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+        }
+
+        addLineToSection("jmp if_" + std::to_string(currentIfCounter) + "_nd", Sections::CODE);
+    }
 }

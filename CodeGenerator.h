@@ -31,6 +31,8 @@ private:
 
     void generateHeader();
     void generateCodeNode(std::unique_ptr<INode> &node);
+    void generateCodeCondition(std::unique_ptr<INode> &node, unsigned currentIfCounter);
+
     void addLineToSection(const std::string &line, Sections section);
     void addTextToLastLine(const std::string &text);
 
