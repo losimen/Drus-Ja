@@ -23,11 +23,14 @@ enum class Sections
 class CodeGenerator
 {
 private:
+    unsigned ifCounter;
+    unsigned forCounter;
+
     std::vector<std::string> m_code;
     std::vector<std::string>::iterator m_codeIterator;
 
     void generateHeader();
-    void generateCodeNode(std::unique_ptr<INode> &node);
+    void generateCodeNode(std::unique_ptr<INode> &node, unsigned currentForCounter = 0);
     void addLineToSection(const std::string &line, Sections section);
     void addTextToLastLine(const std::string &text);
 

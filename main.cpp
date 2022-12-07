@@ -139,9 +139,9 @@ int main()
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
     printTree(root);
 
-//    CodeGenerator codeGenerator;
-//    codeGenerator.generateCode(root);
-//    codeGenerator.writeToFile("File.asm");
+    CodeGenerator codeGenerator;
+    codeGenerator.generateCode(root);
+    codeGenerator.writeToFile("File.asm");
 
     return 0;
 }

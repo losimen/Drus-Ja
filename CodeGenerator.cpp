@@ -5,6 +5,9 @@
 
 CodeGenerator::CodeGenerator()
 {
+    ifCounter = 1;
+    forCounter = 1;
+
     generateHeader();
 }
 
@@ -99,12 +102,15 @@ void CodeGenerator::generateCode(std::unique_ptr<INode> &root)
 }
 
 
-void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
+void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node, unsigned currentForCounter)
 {
     if (node == nullptr)
     {
         return;
     }
+
+    if (currentForCounter == 0)
+        currentForCounter = forCounter;
 
     if (auto pBinOperationNode = dynamic_cast<BinOperationNode*>(node.get()))
     {
@@ -113,7 +119,19 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         {
             auto variable = (VariableNode*)(pBinOperationNode->leftOperand.get());
 
-            generateCodeNode(pBinOperationNode->rightOperand);
+            // if right operand is a variable or just a number we need just push it to stack
+            if (auto pVariable = dynamic_cast<VariableNode*>(pBinOperationNode->rightOperand.get()))
+            {
+                addLineToSection("push " + pVariable->variable.value, Sections::CODE);
+            }
+            else if (auto pNumber = dynamic_cast<NumberNode*>(pBinOperationNode->rightOperand.get()))
+            {
+                addLineToSection("push " + pNumber->number.value, Sections::CODE);
+            }
+            else if (auto pBin = dynamic_cast<BinOperationNode*>(pBinOperationNode->rightOperand.get()))
+            {
+                generateCodeNode(pBinOperationNode->rightOperand, currentForCounter);
+            }
 
             addLineToSection("pop eax", Sections::CODE);
             addLineToSection("mov " + variable->variable.value + ", eax", Sections::CODE);
@@ -136,6 +154,22 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         {
             opStr = "idiv";
         }
+        else if (pBinOperationNode->op.type.name == TokenTypes::EQUAL)
+        {
+            opStr = "cmp";
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL)
+        {
+            opStr = "cmp";
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
+        {
+            opStr = "cmp";
+        }
+        else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
+        {
+            opStr = "cmp";
+        }
 
         m_codeIterator = m_code.end();
         generateCodeNode(pBinOperationNode->leftOperand);
@@ -146,7 +180,31 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addLineToSection("pop ebx", Sections::CODE);
         addLineToSection("pop eax", Sections::CODE);
         addLineToSection(opStr + " eax, ebx", Sections::CODE);
-        addLineToSection("push eax", Sections::CODE);
+
+        if (pBinOperationNode->op.type.name == TokenTypes::PLUS || pBinOperationNode->op.type.name == TokenTypes::MINUS ||
+            pBinOperationNode->op.type.name == TokenTypes::DIVIDE || pBinOperationNode->op.type.name == TokenTypes::MULTIPLY)
+        {
+            addLineToSection("push eax", Sections::CODE);
+        }
+        else
+        {
+            if (pBinOperationNode->op.type.name == TokenTypes::EQUAL)
+            {
+                addLineToSection("je true", Sections::CODE);
+            }
+            else if (pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL)
+            {
+                addLineToSection("jne true", Sections::CODE);
+            }
+            else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
+            {
+                addLineToSection("jl true", Sections::CODE);
+            }
+            else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
+            {
+                addLineToSection("jg true", Sections::CODE);
+            }
+        }
     }
     else if (auto pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
     {
@@ -193,38 +251,28 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     }
     else if (auto pForNode = dynamic_cast<ForNode*>(node.get()))
     {
-        static unsigned forCounter = 0;
         forCounter++;
-
-        /*
-        loop_1_st:
-            mov eax, VaarrA
-            cmp eax, VaarrB
-            je loop_1_nd
-
-            // program code
-
-            dec VaarrA
-            jmp loop_1_st
-
-        loop_1_nd:
-            // end of loop
-         */
 
         const std::string stVarName = ((VariableNode*)pForNode->stValue.get())->variable.value;
 
-        addLineToSection("loop_" + std::to_string(forCounter) + "_st:", Sections::CODE);
+        addLineToSection("loop_" + std::to_string(currentForCounter) + "_st:", Sections::CODE);
         addLineToSection("mov eax, " + stVarName, Sections::CODE);
         addLineToSection("cmp eax, ", Sections::CODE);
-        generateCodeNode(pForNode->ndValue);
-        addLineToSection("je loop_" + std::to_string(forCounter) + "_nd", Sections::CODE);
+        generateCodeNode(pForNode->ndValue, currentForCounter);
+        addLineToSection("je loop_" + std::to_string(currentForCounter) + "_nd", Sections::CODE);
 
         // code of the loop
         generateCode(node);
 
         addLineToSection("dec " + stVarName, Sections::CODE);
-        addLineToSection("jmp loop_" + std::to_string(forCounter) + "_st", Sections::CODE);
-        addLineToSection("loop_" + std::to_string(forCounter) + "_nd:", Sections::CODE);
+        addLineToSection("jmp loop_" + std::to_string(currentForCounter) + "_st", Sections::CODE);
+        addLineToSection("loop_" + std::to_string(currentForCounter) + "_nd:", Sections::CODE);
+
+    }
+    else if (auto pIfNode = dynamic_cast<IfNode*>(node.get()))
+    {
+
+
     }
 
 }
