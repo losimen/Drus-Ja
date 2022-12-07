@@ -226,7 +226,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
 
         addLineToSection("if_" + std::to_string(currentIfCounter) + "_bd: ", Sections::CODE);
         generateCode(pIfNode->ifBody);
-        addLineToSection("if_" + std::to_string(currentIfCounter) + "_nd: ", Sections::CODE);
+        addLineToSection("else_" + std::to_string(currentIfCounter) + "_bd: ", Sections::CODE);
 
         // TODO: implement else
         if (auto elseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
@@ -276,6 +276,6 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
             addLineToSection("jg if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
         }
 
-        addLineToSection("jmp if_" + std::to_string(currentIfCounter) + "_nd", Sections::CODE);
+        addLineToSection("jmp else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
     }
 }
