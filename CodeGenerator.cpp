@@ -249,6 +249,12 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
 {
     if (auto pCondition = dynamic_cast<BinOperationNode*>(node.get()))
     {
+        // TODO: add check whether number or variable
+        m_codeIterator = m_code.end();
+        generateCodeNode(pCondition->leftOperand);
+        m_codeIterator = m_code.end();
+        generateCodeNode(pCondition->rightOperand);
+
         addLineToSection("pop ebx", Sections::CODE);
         addLineToSection("pop eax", Sections::CODE);
         addLineToSection("cmp eax, ebx", Sections::CODE);
