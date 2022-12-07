@@ -30,7 +30,7 @@ private:
     std::vector<std::string>::iterator m_codeIterator;
 
     void generateHeader();
-    void generateCodeNode(std::unique_ptr<INode> &node, unsigned currentForCounter = 0);
+    void generateCodeNode(std::unique_ptr<INode> &node);
     void addLineToSection(const std::string &line, Sections section);
     void addTextToLastLine(const std::string &text);
 
