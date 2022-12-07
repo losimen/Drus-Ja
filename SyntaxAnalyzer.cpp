@@ -294,8 +294,9 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCondition()
 {
     auto leftNode = parseParenthesis(&SyntaxAnalyzer::parseCondition);
 
-    Token op = match({TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::LESS,
-                      TokenTypes::GREATER, TokenTypes::GREATER});
+    // TODO: add more checks
+    Token op = match({TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
+                      TokenTypes::AND, TokenTypes::NOT, TokenTypes::OR});
     if (op.type.name != TokenTypes::UNDEFINED)
     {
         auto rightNode = parseParenthesis(&SyntaxAnalyzer::parseCondition);
