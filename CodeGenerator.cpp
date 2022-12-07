@@ -272,7 +272,6 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node, unsigned curr
     else if (auto pIfNode = dynamic_cast<IfNode*>(node.get()))
     {
 
-
     }
 
 }
