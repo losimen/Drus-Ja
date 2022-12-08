@@ -20,6 +20,14 @@ enum class Sections
 };
 
 
+enum class ConditionLogic
+{
+    AND,
+    OR,
+    UNDEFINED
+};
+
+
 class CodeGenerator
 {
 private:
@@ -31,7 +39,7 @@ private:
 
     void generateHeader();
     void generateCodeNode(std::unique_ptr<INode> &node);
-    void generateCodeCondition(std::unique_ptr<INode> &node, unsigned currentIfCounter);
+    void generateCodeCondition(std::unique_ptr<INode> &node, unsigned currentIfCounter, ConditionLogic logic);
 
     void addLineToSection(const std::string &line, Sections section);
     void addTextToLastLine(const std::string &text);
