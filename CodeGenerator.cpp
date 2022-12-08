@@ -249,33 +249,37 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
 {
     if (auto pCondition = dynamic_cast<BinOperationNode*>(node.get()))
     {
-        // TODO: add check whether number or variable
-        m_codeIterator = m_code.end();
-        generateCodeNode(pCondition->leftOperand);
-        m_codeIterator = m_code.end();
-        generateCodeNode(pCondition->rightOperand);
+        if (pCondition->op.type.name == TokenTypes::EQUAL || pCondition->op.type.name == TokenTypes::NOTEQUAL
+            || pCondition->op.type.name == TokenTypes::LESS || pCondition->op.type.name == TokenTypes::GREATER)
+        {
+            m_codeIterator = m_code.end();
+            generateCodeNode(pCondition->leftOperand);
+            m_codeIterator = m_code.end();
+            generateCodeNode(pCondition->rightOperand);
 
-        addLineToSection("pop ebx", Sections::CODE);
-        addLineToSection("pop eax", Sections::CODE);
-        addLineToSection("cmp eax, ebx", Sections::CODE);
+            addLineToSection("pop ebx", Sections::CODE);
+            addLineToSection("pop eax", Sections::CODE);
+            addLineToSection("cmp eax, ebx", Sections::CODE);
 
-        if (pCondition->op.type.name == TokenTypes::EQUAL)
-        {
-            addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-        }
-        else if (pCondition->op.type.name == TokenTypes::NOTEQUAL)
-        {
-            addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-        }
-        else if (pCondition->op.type.name == TokenTypes::LESS)
-        {
-            addLineToSection("jl if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-        }
-        else if (pCondition->op.type.name == TokenTypes::GREATER)
-        {
-            addLineToSection("jg if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+            if (pCondition->op.type.name == TokenTypes::EQUAL)
+            {
+                addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+            }
+            else if (pCondition->op.type.name == TokenTypes::NOTEQUAL)
+            {
+                addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+            }
+            else if (pCondition->op.type.name == TokenTypes::LESS)
+            {
+                addLineToSection("jl if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+            }
+            else if (pCondition->op.type.name == TokenTypes::GREATER)
+            {
+                addLineToSection("jg if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+            }
+
+            addLineToSection("jmp else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
         }
 
-        addLineToSection("jmp else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
     }
 }
