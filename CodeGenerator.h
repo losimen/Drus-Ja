@@ -39,7 +39,7 @@ private:
 
     void generateHeader();
     void generateCodeNode(std::unique_ptr<INode> &node);
-    void generateCodeCondition(std::unique_ptr<INode> &node, unsigned currentIfCounter, ConditionLogic logic);
+    void generateCodeCondition(std::unique_ptr<INode> &node, unsigned currentIfCounter, ConditionLogic logic, bool isNot);
 
     void addLineToSection(const std::string &line, Sections section);
     void addTextToLastLine(const std::string &text);
