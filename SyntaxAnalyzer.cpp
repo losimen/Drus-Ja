@@ -75,7 +75,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseCode()
             }
 
             codeStringNode = parseVariableBlock();
-            require({TokenTypes::SEMICOLON});
+            require({TokenTypes::SEMICOLON, TokenTypes::NOT});
         }
         else if (isVar && isStart && !isFinish)
         {
@@ -166,7 +166,10 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
             auto elseBody = ASTFactory::createElseBodyNode();
             auto elseBodyCasted = dynamic_cast<ElseBodyNode*>(elseBody.get());
 
-            rootCasted->condition = parseCondition();
+            require({TokenTypes::LPAREN});
+            rootCasted->condition = parseFormula();
+            require({TokenTypes::RPAREN});
+
             rootCasted->ifBody = std::move(ifBody);
             rootCasted->elseBody = std::move(elseBody);
             require({TokenTypes::SEMICOLON});
@@ -218,12 +221,27 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
 
 std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
 {
-    auto leftNode = parseParenthesis(&SyntaxAnalyzer::parseFormula);
+    // Parse unary operations
+    auto opNot = match({TokenTypes::NOT});
+    std::unique_ptr<INode> leftNode;
 
-    Token op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
+    if (opNot.type.name != TokenTypes::UNDEFINED)
+    {
+        auto operand = parseParenthesis();
+        leftNode = ASTFactory::createUnarOperationNode(opNot, operand);
+    }
+    else
+    {
+        leftNode = parseParenthesis();
+    }
+
+    // Parse bin operations
+    Token op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE,
+                      TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
+                      TokenTypes::AND, TokenTypes::OR, TokenTypes::NOT});
     while (op.type.name != TokenTypes::UNDEFINED)
     {
-        auto rightNode = parseParenthesis(&SyntaxAnalyzer::parseFormula);
+        auto rightNode = parseParenthesis();
         leftNode = ASTFactory::createBinOperationNode(op, leftNode, rightNode);
         op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
     }
@@ -232,18 +250,26 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
 }
 
 
-std::unique_ptr<INode> SyntaxAnalyzer::parseParenthesis(std::function<std::unique_ptr<INode> (SyntaxAnalyzer&)> parseExpr)
+std::unique_ptr<INode> SyntaxAnalyzer::parseParenthesis()
 {
-    //
     if (match({TokenTypes::LPAREN}).type.name != TokenTypes::UNDEFINED)
     {
-        std::unique_ptr<INode> node = parseExpr(*this);
-
+        std::unique_ptr<INode> node = parseFormula();
         require({TokenTypes::RPAREN});
         return node;
     }
 
-    return parseVariableOrNumber();
+    auto notOp = match({TokenTypes::NOT});
+    if (notOp.type.name != TokenTypes::UNDEFINED)
+    {
+        auto operand = parseParenthesis();
+        return ASTFactory::createUnarOperationNode(notOp, operand);
+    }
+    else
+    {
+        return parseVariableOrNumber();
+    }
+
 }
 
 
@@ -287,21 +313,4 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
     codeStringNode = parseVariableOrNumber();
 
     return ASTFactory::createInitVariableNode(variable, codeStringNode);
-}
-
-
-std::unique_ptr<INode> SyntaxAnalyzer::parseCondition()
-{
-    auto leftNode = parseParenthesis(&SyntaxAnalyzer::parseCondition);
-
-    // TODO: add more checks
-    Token op = match({TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
-                      TokenTypes::AND, TokenTypes::NOT, TokenTypes::OR});
-    if (op.type.name != TokenTypes::UNDEFINED)
-    {
-        auto rightNode = parseParenthesis(&SyntaxAnalyzer::parseCondition);
-        return ASTFactory::createBinOperationNode(op, leftNode, rightNode);
-    }
-
-    return leftNode;
 }
