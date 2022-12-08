@@ -49,9 +49,7 @@ void CodeGenerator::writeToFile(const std::string &filename)
 {
     std::ofstream file(filename);
     for (const auto &line : m_code)
-    {
         file << line << std::endl;
-    }
 }
 
 
@@ -230,12 +228,8 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addLineToSection("else_" + std::to_string(currentIfCounter) + "_bd: ", Sections::CODE);
 
         if (auto elseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
-        {
             if (!elseBody->nodes.empty())
-            {
                 generateCode(pIfNode->elseBody);
-            }
-        }
 
         addLineToSection("if_" + std::to_string(currentIfCounter) + "_nd:", Sections::CODE);
     }
