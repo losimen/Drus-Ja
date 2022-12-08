@@ -258,6 +258,7 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
         {
             generateCodeCondition(pCondition->leftOperand, currentIfCounter, ConditionLogic::OR);
             generateCodeCondition(pCondition->rightOperand, currentIfCounter, ConditionLogic::OR);
+            addLineToSection("jmp else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
         }
         else
         {
@@ -294,7 +295,22 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
                 }
                 else
                 {
-
+                    if (pCondition->op.type.name == TokenTypes::EQUAL)
+                    {
+                        addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    }
+                    else if (pCondition->op.type.name == TokenTypes::NOTEQUAL)
+                    {
+                        addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    }
+                    else if (pCondition->op.type.name == TokenTypes::LESS)
+                    {
+                        addLineToSection("jl if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    }
+                    else if (pCondition->op.type.name == TokenTypes::GREATER)
+                    {
+                        addLineToSection("jg if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    }
                 }
             }
 
