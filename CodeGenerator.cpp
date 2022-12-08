@@ -143,6 +143,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         }
         else if (pBinOperationNode->op.type.name == TokenTypes::DIVIDE)
         {
+            // TODO: fix div
             opStr = "idiv";
         }
 
@@ -165,8 +166,9 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         }
         else if (pUnarOperationNode->op.type.name == TokenTypes::OUTPUT)
         {
-            addLineToSection("push ", Sections::CODE);
+            m_codeIterator = m_code.end();
             generateCodeNode(pUnarOperationNode->operand);
+
             addLineToSection("push offset fmt", Sections::CODE);
             addLineToSection("push offset buffer", Sections::CODE);
             addLineToSection("call wsprintf", Sections::CODE);
@@ -289,16 +291,16 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
                 else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
                 {
                     if (!isNot)
-                        addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    else
                         addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
                 }
                 else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
                 {
                     if (!isNot)
-                        addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    else
                         addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
                 }
             }
             else
