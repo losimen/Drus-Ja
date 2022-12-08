@@ -32,8 +32,8 @@ Token SyntaxAnalyzer::require(std::initializer_list<std::string> expected)
     Token token = match(expected);
 
     if (token.type.name == TokenTypes::UNDEFINED)
-        throw std::runtime_error("Syntax error " + std::to_string(token.line) + " |p: " +
-                                 std::to_string(token.pos) + ": expected " + *expected.begin());
+        throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + " |p: " +
+                                 std::to_string(tokens[pos].pos) + ": expected " + *expected.begin());
 
     return token;
 }
@@ -121,7 +121,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
         auto io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
         if (io.type.name != TokenTypes::UNDEFINED)
         {
-            auto operand = parseVariableOrNumber();
+            auto operand = parseFormula();
             return ASTFactory::createUnarOperationNode(io, operand);
         }
 
@@ -287,7 +287,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
         if (semanticAnalyzer.isVariable(variable.value))
             return ASTFactory::createVariableNode(variable);
         else
-            throw std::runtime_error("Syntax error " + std::to_string(variable.line) + ": variable " + variable.value + " is not declared");
+            throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].pos) + ": variable " + tokens[pos].value + " is not declared");
     }
 
     throw std::runtime_error("Syntax error: " + std::to_string(tokens[pos].line) + ": expected variable or number");
@@ -304,12 +304,12 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableBlock()
 
     Token variable = match({TokenTypes::VARIABLE});
     if (variable.type.name == TokenTypes::UNDEFINED)
-        throw std::runtime_error("Syntax error: " + std::to_string(variable.line) + " |p: " +
-                                 std::to_string(variable.pos) + ": expected variable name");
+        throw std::runtime_error("Syntax error: " + std::to_string(tokens[pos].line) + " |p: " +
+                                 std::to_string(tokens[pos].pos) + ": expected variable name");
 
     if (semanticAnalyzer.isVariable(variable.value))
-        throw std::runtime_error("Syntax error: " + std::to_string(variable.line) + " |p: " +
-                                 std::to_string(variable.pos) + ": variable " + variable.value + " is already declared");
+        throw std::runtime_error("Syntax error: " + std::to_string(tokens[pos].line) + " |p: " +
+                                 std::to_string(tokens[pos].pos) + ": variable " + tokens[pos].value + " is already declared");
 
     semanticAnalyzer.addVariable(variable.value);
     codeStringNode = parseVariableOrNumber();
