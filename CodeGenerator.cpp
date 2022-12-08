@@ -229,11 +229,11 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addLineToSection("else_" + std::to_string(currentIfCounter) + "_bd: ", Sections::CODE);
 
         // TODO: implement else
-        if (auto elseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
-        {
-            if (elseBody->nodes.empty())
-                return;
-        }
+//        if (auto elseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
+//        {
+//            if (elseBody->nodes.empty())
+//                return;
+//        }
     }
 
 }
@@ -263,23 +263,20 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
 
             if (pCondition->op.type.name == TokenTypes::EQUAL)
             {
-                addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                addLineToSection("jne else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
             }
             else if (pCondition->op.type.name == TokenTypes::NOTEQUAL)
             {
-                addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                addLineToSection("je else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
             }
             else if (pCondition->op.type.name == TokenTypes::LESS)
             {
-                addLineToSection("jl if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
             }
             else if (pCondition->op.type.name == TokenTypes::GREATER)
             {
-                addLineToSection("jg if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
             }
-
-            addLineToSection("jmp else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
         }
-
     }
 }
