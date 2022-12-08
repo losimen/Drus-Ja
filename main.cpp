@@ -77,7 +77,7 @@ void printTreeElem(std::unique_ptr<INode> &node)
     {
         static int forCounter = 0;
         forCounter++;
-        std::cout << "---FOR- " << forCounter;
+        std::cout << "---FOR- " << forCounter << std::endl;
 
         printTreeElem(pForNode->stValue);
         printTree(node);
