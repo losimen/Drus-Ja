@@ -160,8 +160,6 @@ void LexicalAnalyzer::printTokens() {
     int cnt = 0;
     for (auto it : tokenList)
     {
-        std::cout << std::setfill(' ');
-
         file1 << std::setw(8) << cnt;
         file1 << std::setw(16) << it.line;
         file1 << std::setw(16) << it.type.name;
