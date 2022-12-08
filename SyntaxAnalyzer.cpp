@@ -238,12 +238,14 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
     // Parse bin operations
     Token op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE,
                       TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
-                      TokenTypes::AND, TokenTypes::OR, TokenTypes::NOT});
+                      TokenTypes::AND, TokenTypes::OR});
     while (op.type.name != TokenTypes::UNDEFINED)
     {
         auto rightNode = parseParenthesis();
         leftNode = ASTFactory::createBinOperationNode(op, leftNode, rightNode);
-        op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE});
+        op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE,
+                    TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
+                    TokenTypes::AND, TokenTypes::OR});
     }
 
     return leftNode;
