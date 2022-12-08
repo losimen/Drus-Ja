@@ -229,7 +229,6 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addLineToSection("jmp if_" + std::to_string(currentIfCounter) + "_nd", Sections::CODE);
         addLineToSection("else_" + std::to_string(currentIfCounter) + "_bd: ", Sections::CODE);
 
-        // TODO: implement else
         if (auto elseBody = dynamic_cast<ElseBodyNode*>(pIfNode->elseBody.get()))
         {
             if (!elseBody->nodes.empty())

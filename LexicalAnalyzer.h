@@ -1,11 +1,9 @@
 // Drus_Ja by losimen 29.11.2022
 
-
 #ifndef DRUS_JA_LEXICALANALYZER_H
 #define DRUS_JA_LEXICALANALYZER_H
 
-// TODO: remove iostream
-#include <iostream>
+
 #include <fstream>
 #include <regex>
 #include <string>

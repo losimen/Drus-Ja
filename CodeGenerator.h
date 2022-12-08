@@ -3,9 +3,6 @@
 #ifndef DRUS_JA_CODEGENERATOR_H
 #define DRUS_JA_CODEGENERATOR_H
 
-// TODO: remove iostream
-#include <iostream>
-
 #include <vector>
 #include <string>
 #include <fstream>
