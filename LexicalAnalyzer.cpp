@@ -146,3 +146,30 @@ void LexicalAnalyzer::makePriorityList()
         offset += 2;
     }
 }
+
+
+void LexicalAnalyzer::printTokens() {
+    std::ofstream file1;
+    file1.open("tokensInfo.txt");
+
+    file1 << "\n";
+    file1 << "\t\t\t TOKEN TABLE\n";
+    file1 << std::setfill(' ') << std::setw(8) << "Index" << std::setw(16) << "Line number"
+          << std::setw(16) << "Token type" << std::setw(17) << "Value\n";
+
+    int cnt = 0;
+    for (auto it : tokenList)
+    {
+        std::cout << std::setfill(' ');
+
+        file1 << std::setw(8) << cnt;
+        file1 << std::setw(16) << it.line;
+        file1 << std::setw(16) << it.type.name;
+        file1 << std::setw(16) << it.value;
+
+        cnt++;
+        file1 << "\n";
+    }
+
+    file1.close();
+}

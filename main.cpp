@@ -131,17 +131,15 @@ int main()
 
     LexicalAnalyzer lexicalAnalyzer(fileBuffer);
     std::vector<Token> tokens = lexicalAnalyzer.analyze();
-
-    for (auto &token: tokens)
-        std::cout << "L: " << token.line << " |TYPE: " << token.type.name << " | " << token.value << std::endl;
+    lexicalAnalyzer.printTokens();
 
     SyntaxAnalyzer syntaxAnalyzer(tokens);
     std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
     printTree(root);
 
-//    CodeGenerator codeGenerator;
-//    codeGenerator.generateCode(root);
-//    codeGenerator.writeToFile("File.asm");
+    CodeGenerator codeGenerator;
+    codeGenerator.generateCode(root);
+    codeGenerator.writeToFile("File.asm");
 
     return 0;
 }

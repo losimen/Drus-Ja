@@ -6,6 +6,7 @@
 
 // TODO: remove iostream
 #include <iostream>
+#include <fstream>
 #include <regex>
 #include <string>
 
@@ -34,6 +35,8 @@ private:
 public:
     LexicalAnalyzer() = delete;
     LexicalAnalyzer(const std::string &code);
+
+    void printTokens();
 
     std::vector<Token> analyze();
 };
