@@ -261,85 +261,86 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
             generateCodeCondition(pBinOperationNode->rightOperand, currentIfCounter, ConditionLogic::OR, isNot);
             addLineToSection("jmp else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
         }
-        else
-        {
-            if (pBinOperationNode->op.type.name == TokenTypes::EQUAL || pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL
+        else if (pBinOperationNode->op.type.name == TokenTypes::EQUAL || pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL
                 || pBinOperationNode->op.type.name == TokenTypes::LESS || pBinOperationNode->op.type.name == TokenTypes::GREATER)
+        {
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->leftOperand);
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->rightOperand);
+
+            addLineToSection("pop ebx", Sections::CODE);
+            addLineToSection("pop eax", Sections::CODE);
+            addLineToSection("cmp eax, ebx", Sections::CODE);
+
+            if (conditionLogic == ConditionLogic::AND || conditionLogic == ConditionLogic::UNDEFINED)
             {
-                m_codeIterator = m_code.end();
-                generateCodeNode(pBinOperationNode->leftOperand);
-                m_codeIterator = m_code.end();
-                generateCodeNode(pBinOperationNode->rightOperand);
-
-                addLineToSection("pop ebx", Sections::CODE);
-                addLineToSection("pop eax", Sections::CODE);
-                addLineToSection("cmp eax, ebx", Sections::CODE);
-
-                if (conditionLogic == ConditionLogic::AND || conditionLogic == ConditionLogic::UNDEFINED)
+                if (pBinOperationNode->op.type.name == TokenTypes::EQUAL)
                 {
-                    if (pBinOperationNode->op.type.name == TokenTypes::EQUAL)
-                    {
-                        if (!isNot)
-                            addLineToSection("jne else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("je else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
-                    else if (pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL)
-                    {
-                        if (!isNot)
-                            addLineToSection("je else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("jne else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
-                    else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
-                    {
-                        if (!isNot)
-                            addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
-                    else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
-                    {
-                        if (!isNot)
-                            addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
+                    if (!isNot)
+                        addLineToSection("jne else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("je else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
                 }
-                else
+                else if (pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL)
                 {
-                    if (pBinOperationNode->op.type.name == TokenTypes::EQUAL)
-                    {
-                        if (!isNot)
-                            addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
-                    else if (pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL)
-                    {
-                        if (!isNot)
-                            addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
-                    else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
-                    {
-                        if (!isNot)
-                            addLineToSection("jle if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("jge if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
-                    else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
-                    {
-                        if (!isNot)
-                            addLineToSection("jge if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                        else
-                            addLineToSection("jle if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    }
+                    if (!isNot)
+                        addLineToSection("je else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jne else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                }
+                else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
+                {
+                    if (!isNot)
+                        addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                }
+                else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
+                {
+                    if (!isNot)
+                        addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
                 }
             }
-        }
+            else
+            {
+                if (pBinOperationNode->op.type.name == TokenTypes::EQUAL)
+                {
+                    if (!isNot)
+                        addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                }
+                else if (pBinOperationNode->op.type.name == TokenTypes::NOTEQUAL)
+                {
+                    if (!isNot)
+                        addLineToSection("jne if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("je if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                }
+                else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
+                {
+                    if (!isNot)
+                        addLineToSection("jle if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jge if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                }
+                else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
+                {
+                    if (!isNot)
+                        addLineToSection("jge if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jle if_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                }
 
+            }
+        }
+        else
+        {
+            generateCodeNode(node);
+        }
     }
     else if (auto pUnarOperationNode = dynamic_cast<UnarOperationNode*>(node.get()))
     {
