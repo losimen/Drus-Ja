@@ -94,8 +94,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // system(std::string("C:\\masm32\\bin\\ml /c /coff " + std::string("File") + ".asm").c_str());
-    // system(std::string("C:\\masm32\\bin\\Link /SUBSYSTEM:WINDOWS " + std::string("File") + ".obj").c_str());
+    system(std::string("C:\\masm32\\bin\\ml /c /coff " + std::string("File") + ".asm").c_str());
+    system(std::string("C:\\masm32\\bin\\Link /SUBSYSTEM:WINDOWS " + std::string("File") + ".obj").c_str());
 
     return 0;
 }
