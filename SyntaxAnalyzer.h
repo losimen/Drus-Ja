@@ -34,12 +34,15 @@ private:
     std::unique_ptr<INode> parseParenthesis();
     std::unique_ptr<INode> parseFormula();
 
+    void printTreeElem(std::unique_ptr<INode>& node);
+
 public:
     SyntaxAnalyzer() = delete;
 
     SyntaxAnalyzer(std::vector<Token> &tokens);
 
     std::unique_ptr<INode> parseCode();
+    void printTree(std::unique_ptr<INode>& root);
 };
 
 
