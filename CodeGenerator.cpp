@@ -14,6 +14,7 @@ CodeGenerator::CodeGenerator()
 
 void CodeGenerator::generateHeader()
 {
+    m_code.reserve(50);
     m_code.emplace_back("; Drus_Ja by losimen");
     m_code.emplace_back(".686");
     m_code.emplace_back(".model flat, stdcall");
@@ -32,13 +33,28 @@ void CodeGenerator::generateHeader()
     m_code.emplace_back(".data");
     m_code.emplace_back("fmt db '%d', 13, 10, 0");
     m_code.emplace_back("buffer db 256 dup(0)");
+    m_code.emplace_back("hConsoleInput dd 0");
+    m_code.emplace_back("InputBufferElement db 32 dup(0)");
+    m_code.emplace_back("InputNumberOfChars dd 0");
+    m_code.emplace_back("endMsg db 'Press enter key to close program', 0");
     m_code.emplace_back(";>--DATA SECTION--<");
     m_code.emplace_back("");
     m_code.emplace_back(".code");
     m_code.emplace_back("");
     m_code.emplace_back("start:");
+    m_code.emplace_back("push -10");
+    m_code.emplace_back("call GetStdHandle");
+    m_code.emplace_back("mov hConsoleInput, eax");
     m_code.emplace_back(";>--CODE SECTION--<");
     m_code.emplace_back("");
+    m_code.emplace_back("push offset endMsg");
+    m_code.emplace_back("call StdOut");
+    m_code.emplace_back("push 0");
+    m_code.emplace_back("push offset InputNumberOfChars");
+    m_code.emplace_back("push 32");
+    m_code.emplace_back("push offset InputBufferElement");
+    m_code.emplace_back("push hConsoleInput");
+    m_code.emplace_back("call ReadConsoleA");
     m_code.emplace_back("push 0");
     m_code.emplace_back("call ExitProcess");
     m_code.emplace_back("end start");
@@ -162,7 +178,20 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
     {
         if (pUnarOperationNode->op.type.name == TokenTypes::INPUT)
         {
-            // TODO: ask user for input
+            addLineToSection("push 0", Sections::CODE);
+            addLineToSection("push offset InputNumberOfChars", Sections::CODE);
+            addLineToSection("push 32", Sections::CODE);
+            addLineToSection("push offset InputBufferElement", Sections::CODE);
+            addLineToSection("push hConsoleInput", Sections::CODE);
+            addLineToSection("call ReadConsoleA", Sections::CODE);
+
+            addLineToSection("push offset InputBufferElement", Sections::CODE);
+            addLineToSection("call crt_atoi", Sections::CODE);
+
+            addLineToSection("mov ", Sections::CODE);
+            generateCodeNode(pUnarOperationNode->operand);
+            addTextToLastLine(", eax");
+
         }
         else if (pUnarOperationNode->op.type.name == TokenTypes::OUTPUT)
         {
