@@ -137,7 +137,7 @@ void LexicalAnalyzer::makePriorityList()
 
     for (auto it = tokenList.begin(); it < tokenList.end(); ++it)
     {
-        if ((it->type.name == TokenTypes::MULTIPLY || it->type.name == TokenTypes::DIVIDE) &&
+        if ((it->type.name == TokenTypes::MULTIPLY || it->type.name == TokenTypes::DIVIDE || it->type.name == TokenTypes::MOD) &&
             ((it-1)->type.name != TokenTypes::RPAREN && (it+1)->type.name != TokenTypes::LPAREN))
         {
             mulDivTokens.push_back(std::distance(tokenList.begin(), it));

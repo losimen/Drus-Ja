@@ -264,7 +264,7 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
         addLineToSection("mov eax, " + stVarName, Sections::CODE);
         addLineToSection("cmp eax, ", Sections::CODE);
         generateCodeNode(pForNode->ndValue);
-        addLineToSection("je loop_" + std::to_string(currentForCounter) + "_nd", Sections::CODE);
+        addLineToSection("jl loop_" + std::to_string(currentForCounter) + "_nd", Sections::CODE);
 
         // code of the loop
         generateCode(node);
@@ -347,16 +347,16 @@ void CodeGenerator::generateCodeCondition(std::unique_ptr<INode> &node, unsigned
                 else if (pBinOperationNode->op.type.name == TokenTypes::LESS)
                 {
                     if (!isNot)
-                        addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    else
                         addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
                 }
                 else if (pBinOperationNode->op.type.name == TokenTypes::GREATER)
                 {
                     if (!isNot)
-                        addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
-                    else
                         addLineToSection("jle else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
+                    else
+                        addLineToSection("jge else_" + std::to_string(currentIfCounter) + "_bd", Sections::CODE);
                 }
             }
             else
