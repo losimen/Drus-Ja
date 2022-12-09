@@ -173,6 +173,22 @@ void CodeGenerator::generateCodeNode(std::unique_ptr<INode> &node)
             addLineToSection("push eax", Sections::CODE);
             return;
         }
+        else if (pBinOperationNode->op.type.name == TokenTypes::MOD)
+        {
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->leftOperand);
+
+            m_codeIterator = m_code.end();
+            generateCodeNode(pBinOperationNode->rightOperand);
+
+            addLineToSection("pop ebx", Sections::CODE);
+            addLineToSection("pop eax", Sections::CODE);
+            addLineToSection("cdq", Sections::CODE);
+            addLineToSection("idiv ebx", Sections::CODE);
+
+            addLineToSection("push edx", Sections::CODE);
+            return;
+        }
 
         m_codeIterator = m_code.end();
         generateCodeNode(pBinOperationNode->leftOperand);
