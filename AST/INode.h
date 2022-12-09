@@ -3,6 +3,9 @@
 #ifndef DRUS_JA_INODE_H
 #define DRUS_JA_INODE_H
 
+#include <vector>
+#include <memory>
+
 /*
  * Has to be empty structure
  */

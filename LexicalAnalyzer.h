@@ -7,6 +7,8 @@
 #include <fstream>
 #include <regex>
 #include <string>
+#include <algorithm>
+#include <iomanip>
 
 #include "Token.h"
 #include "TokenTypeList.h"

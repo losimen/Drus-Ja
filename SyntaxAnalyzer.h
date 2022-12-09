@@ -3,6 +3,10 @@
 #ifndef DRUS_JA_SYNTAXANALYZER_H
 #define DRUS_JA_SYNTAXANALYZER_H
 
+#include <algorithm>
+#include <exception>
+#include <stdexcept>
+
 #include "Token.h"
 #include "AST/INode.h"
 #include "AST/ASTFactory.h"

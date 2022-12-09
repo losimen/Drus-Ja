@@ -2,6 +2,7 @@
 
 
 #include "LexicalAnalyzer.h"
+#include <iostream>
 
 
 bool LexicalAnalyzer::nextToken()
@@ -118,12 +119,17 @@ std::vector<Token> LexicalAnalyzer::analyze()
     line = 1;
     row = 1;
 
+    // TODO: optimise this
+    // in windows regex "^Var" will match "1234\nVar"
+    // so to avoid that we will replace all occurence of \n with \r
+    std::replace(code.begin(), code.end(), '\n', '\r');
     while (nextToken())
     { }
     makePriorityList();
 
     return tokenList;
 }
+
 
 void LexicalAnalyzer::makePriorityList()
 {

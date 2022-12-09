@@ -1,11 +1,14 @@
 // Drus_Ja by losimen 29.11.2022
 
 #include "SyntaxAnalyzer.h"
-
+#include <iostream>
 
 SyntaxAnalyzer::SyntaxAnalyzer(std::vector<Token> &tokens): tokens(tokens)
 {
-
+    pos = 0;
+    isStart = false;
+    isFinish = false;
+    isVar = false;
 }
 
 

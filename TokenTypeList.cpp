@@ -40,7 +40,7 @@ TokenList TokenTypeList::tokenTypeList
         TokenType(NOT, "!!"),
         TokenType(STARTCOMMENT, "/\\*"),
         TokenType(ENDCOMMENT, "\\*/"),
-        TokenType(NEWLINE, "\\n"),
+        TokenType(NEWLINE, "\r"),
         TokenType(SPACE, " ")
 };
 

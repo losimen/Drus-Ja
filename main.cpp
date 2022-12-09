@@ -105,7 +105,7 @@ void printTreeElem(std::unique_ptr<INode> &node)
             }
         }
 
-        std::cout << "---END IF " << ifCounter << std::endl;
+        std::cout << "---END IF " << ifCounter;
     }
 }
 
@@ -127,19 +127,10 @@ void printTree(std::unique_ptr<INode> &root)
 
 int main()
 {
-    std::string fileBuffer = readFile("File.txt");
 
-    LexicalAnalyzer lexicalAnalyzer(fileBuffer);
-    std::vector<Token> tokens = lexicalAnalyzer.analyze();
-    lexicalAnalyzer.printTokens();
 
-    SyntaxAnalyzer syntaxAnalyzer(tokens);
-    std::unique_ptr<INode> root = syntaxAnalyzer.parseCode();
-    printTree(root);
-
-    CodeGenerator codeGenerator;
-    codeGenerator.generateCode(root);
-    codeGenerator.writeToFile("File.asm");
+    system(std::string("masm32\\bin\\ml /c /coff " + std::string("File") + ".asm").c_str());
+    system(std::string("masm32\\bin\\Link /SUBSYSTEM:WINDOWS " + std::string("File") + ".obj").c_str());
 
     return 0;
 }
