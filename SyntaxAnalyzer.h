@@ -31,8 +31,11 @@ private:
     std::unique_ptr<INode> parseVariableBlock();
     std::unique_ptr<INode> parseMainBlock();
     std::unique_ptr<INode> parseVariableOrNumber();
-    std::unique_ptr<INode> parseParenthesis();
-    std::unique_ptr<INode> parseFormula();
+    std::unique_ptr<INode> parseExpression();
+    std::unique_ptr<INode> parseAdditive();
+    std::unique_ptr<INode> parseMultiplicative();
+    std::unique_ptr<INode> parsePrimary();
+
 
     void printTreeElem(std::unique_ptr<INode>& node);
 

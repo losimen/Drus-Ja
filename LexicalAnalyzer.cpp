@@ -125,7 +125,7 @@ std::vector<Token> LexicalAnalyzer::analyze()
     std::replace(code.begin(), code.end(), '\n', '\r');
     while (nextToken())
     { }
-    makePriorityList();
+    //makePriorityList();
 
     return tokenList;
 }

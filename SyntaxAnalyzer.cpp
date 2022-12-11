@@ -26,7 +26,7 @@ Token SyntaxAnalyzer::match(std::initializer_list<std::string> expected)
         }
     }
 
-    return Token();
+    return {};
 }
 
 
@@ -124,7 +124,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
         auto io = match({TokenTypes::INPUT, TokenTypes::OUTPUT});
         if (io.type.name != TokenTypes::UNDEFINED)
         {
-            auto operand = parseFormula();
+            auto operand = parseExpression();
             return ASTFactory::createUnarOperationNode(io, operand);
         }
 
@@ -170,7 +170,8 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
             auto elseBodyCasted = dynamic_cast<ElseBodyNode*>(elseBody.get());
 
             require({TokenTypes::LPAREN});
-            rootCasted->condition = parseFormula();
+            // TODO: parse condition
+            rootCasted->condition = parseExpression();
             require({TokenTypes::RPAREN});
 
             rootCasted->ifBody = std::move(ifBody);
@@ -213,68 +214,12 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
     const auto assignOperator = match({TokenTypes::ASSIGNMENT});
     if (assignOperator.type.name != TokenTypes::UNDEFINED)
     {
-        auto rightFormulaNode = parseFormula();
+        auto rightFormulaNode = parseExpression();
         auto binaryOperatorNode = ASTFactory::createBinOperationNode(assignOperator, variableNode, rightFormulaNode);
         return binaryOperatorNode;
     }
 
     throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].line) + ": expected expression");
-}
-
-
-std::unique_ptr<INode> SyntaxAnalyzer::parseFormula()
-{
-    // Parse unary operations
-    auto opNot = match({TokenTypes::NOT});
-    std::unique_ptr<INode> leftNode;
-
-    if (opNot.type.name != TokenTypes::UNDEFINED)
-    {
-        auto operand = parseParenthesis();
-        leftNode = ASTFactory::createUnarOperationNode(opNot, operand);
-    }
-    else
-    {
-        leftNode = parseParenthesis();
-    }
-
-    // Parse bin operations
-    Token op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE,
-                      TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
-                      TokenTypes::AND, TokenTypes::OR, TokenTypes::MOD});
-    while (op.type.name != TokenTypes::UNDEFINED)
-    {
-        auto rightNode = parseParenthesis();
-        leftNode = ASTFactory::createBinOperationNode(op, leftNode, rightNode);
-        op = match({TokenTypes::PLUS, TokenTypes::MINUS, TokenTypes::MULTIPLY, TokenTypes::DIVIDE,
-                    TokenTypes::EQUAL, TokenTypes::NOTEQUAL, TokenTypes::LESS, TokenTypes::GREATER,
-                    TokenTypes::AND, TokenTypes::OR, TokenTypes::MOD});
-    }
-
-    return leftNode;
-}
-
-
-std::unique_ptr<INode> SyntaxAnalyzer::parseParenthesis()
-{
-    if (match({TokenTypes::LPAREN}).type.name != TokenTypes::UNDEFINED)
-    {
-        std::unique_ptr<INode> node = parseFormula();
-        require({TokenTypes::RPAREN});
-        return node;
-    }
-
-    auto notOp = match({TokenTypes::NOT});
-    if (notOp.type.name != TokenTypes::UNDEFINED)
-    {
-        auto operand = parseParenthesis();
-        return ASTFactory::createUnarOperationNode(notOp, operand);
-    }
-    else
-    {
-        return parseVariableOrNumber();
-    }
-
 }
 
 
@@ -290,7 +235,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseVariableOrNumber()
         if (semanticAnalyzer.isVariable(variable.value))
             return ASTFactory::createVariableNode(variable);
         else
-            throw std::runtime_error("Syntax error " + std::to_string(tokens[pos].pos) + ": variable " + tokens[pos].value + " is not declared");
+            throw std::runtime_error("Semantic error " + std::to_string(tokens[pos-1].line) + ": variable " + tokens[pos-1].value + " is not declared");
     }
 
     throw std::runtime_error("Syntax error: " + std::to_string(tokens[pos].line) + ": expected variable or number");
@@ -416,4 +361,96 @@ void SyntaxAnalyzer::printTree(std::unique_ptr<INode>& root)
         printTreeElem(node);
         std::cout << std::endl;
     }
+}
+
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseExpression()
+{
+    return parseAdditive();
+}
+
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseAdditive()
+{
+    auto result = parseMultiplicative();
+
+    while (true)
+    {
+        auto add = match({TokenTypes::PLUS});
+        if (add.type.name != TokenTypes::UNDEFINED)
+        {
+            auto right = parseMultiplicative();
+            result = ASTFactory::createBinOperationNode(add, result, right);
+            continue;
+        }
+
+        auto sub = match({TokenTypes::MINUS});
+        if (sub.type.name != TokenTypes::UNDEFINED)
+        {
+            auto right = parseMultiplicative();
+            result = ASTFactory::createBinOperationNode(sub, result, right);
+            continue;
+        }
+
+        break;
+    }
+
+    return result;
+}
+
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseMultiplicative()
+{
+    auto result = parsePrimary();
+
+    while (true)
+    {
+        auto mul = match({TokenTypes::MULTIPLY});
+        if (mul.type.name != TokenTypes::UNDEFINED)
+        {
+            auto right = parsePrimary();
+            result = ASTFactory::createBinOperationNode(mul, result, right);
+            continue;
+        }
+
+        auto div = match({TokenTypes::DIVIDE});
+        if (div.type.name != TokenTypes::UNDEFINED)
+        {
+            auto right = parsePrimary();
+            result = ASTFactory::createBinOperationNode(div, result, right);
+            continue;
+        }
+
+        auto mod = match({TokenTypes::MOD});
+        if (mod.type.name != TokenTypes::UNDEFINED)
+        {
+            auto right = parsePrimary();
+            result = ASTFactory::createBinOperationNode(mod, result, right);
+            continue;
+        }
+        break;
+    }
+
+    return result;
+}
+
+
+std::unique_ptr<INode> SyntaxAnalyzer::parsePrimary()
+{
+    auto numOrVar = match({TokenTypes::NUMBER, TokenTypes::VARIABLE});
+    if (numOrVar.type.name != TokenTypes::UNDEFINED)
+    {
+        --pos;
+        return parseVariableOrNumber();
+    }
+
+    auto leftBracket = match({TokenTypes::LPAREN});
+    if (leftBracket.type.name != TokenTypes::UNDEFINED)
+    {
+        auto expr = parseExpression();
+        require({TokenTypes::RPAREN});
+        return expr;
+    }
+
+    throw std::runtime_error("Syntax error at " + std::to_string(tokens[pos].line) + ": unexpected token " + tokens[pos].value);
 }
