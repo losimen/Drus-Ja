@@ -170,7 +170,6 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMainBlock()
             auto elseBodyCasted = dynamic_cast<ElseBodyNode*>(elseBody.get());
 
             require({TokenTypes::LPAREN});
-            // TODO: parse condition
             rootCasted->condition = parseExpression();
             require({TokenTypes::RPAREN});
 
@@ -374,21 +373,14 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseAdditive()
 {
     auto result = parseMultiplicative();
 
+
     while (true)
     {
-        auto add = match({TokenTypes::PLUS});
-        if (add.type.name != TokenTypes::UNDEFINED)
+        if (parseSingleAdditive(TokenTypes::PLUS, result) || parseSingleAdditive(TokenTypes::MINUS, result) ||
+            parseSingleAdditive(TokenTypes::EQUAL, result) ||  parseSingleAdditive(TokenTypes::NOTEQUAL, result) ||
+            parseSingleAdditive(TokenTypes::AND, result) || parseSingleAdditive(TokenTypes::OR, result) ||
+            parseSingleAdditive(TokenTypes::GREATER, result) || parseSingleAdditive(TokenTypes::LESS, result))
         {
-            auto right = parseMultiplicative();
-            result = ASTFactory::createBinOperationNode(add, result, right);
-            continue;
-        }
-
-        auto sub = match({TokenTypes::MINUS});
-        if (sub.type.name != TokenTypes::UNDEFINED)
-        {
-            auto right = parseMultiplicative();
-            result = ASTFactory::createBinOperationNode(sub, result, right);
             continue;
         }
 
@@ -401,14 +393,14 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseAdditive()
 
 std::unique_ptr<INode> SyntaxAnalyzer::parseMultiplicative()
 {
-    auto result = parsePrimary();
+    auto result = parseUnary();
 
     while (true)
     {
         auto mul = match({TokenTypes::MULTIPLY});
         if (mul.type.name != TokenTypes::UNDEFINED)
         {
-            auto right = parsePrimary();
+            auto right = parseUnary();
             result = ASTFactory::createBinOperationNode(mul, result, right);
             continue;
         }
@@ -416,7 +408,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMultiplicative()
         auto div = match({TokenTypes::DIVIDE});
         if (div.type.name != TokenTypes::UNDEFINED)
         {
-            auto right = parsePrimary();
+            auto right = parseUnary();
             result = ASTFactory::createBinOperationNode(div, result, right);
             continue;
         }
@@ -424,7 +416,7 @@ std::unique_ptr<INode> SyntaxAnalyzer::parseMultiplicative()
         auto mod = match({TokenTypes::MOD});
         if (mod.type.name != TokenTypes::UNDEFINED)
         {
-            auto right = parsePrimary();
+            auto right = parseUnary();
             result = ASTFactory::createBinOperationNode(mod, result, right);
             continue;
         }
@@ -453,4 +445,38 @@ std::unique_ptr<INode> SyntaxAnalyzer::parsePrimary()
     }
 
     throw std::runtime_error("Syntax error at " + std::to_string(tokens[pos].line) + ": unexpected token " + tokens[pos].value);
+}
+
+
+bool SyntaxAnalyzer::parseSingleAdditive(const std::string &additiveName, std::unique_ptr<INode> &result)
+{
+    auto op = match({additiveName});
+    if (op.type.name != TokenTypes::UNDEFINED)
+    {
+        auto right = parseMultiplicative();
+        result = ASTFactory::createBinOperationNode(op, result, right);
+        return true;
+    }
+
+    return false;
+}
+
+
+std::unique_ptr<INode> SyntaxAnalyzer::parseUnary()
+{
+    auto minus = match({TokenTypes::MINUS});
+    if (minus.type.name != TokenTypes::UNDEFINED)
+    {
+        auto operand = parsePrimary();
+        return ASTFactory::createUnarOperationNode(minus, operand);
+    }
+
+    auto notEqual = match({TokenTypes::NOT});
+    if (notEqual.type.name != TokenTypes::UNDEFINED)
+    {
+        auto operand = parsePrimary();
+        return ASTFactory::createUnarOperationNode(notEqual, operand);
+    }
+
+    return parsePrimary();
 }

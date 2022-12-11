@@ -33,9 +33,12 @@ private:
     std::unique_ptr<INode> parseVariableOrNumber();
     std::unique_ptr<INode> parseExpression();
     std::unique_ptr<INode> parseAdditive();
+
+    bool parseSingleAdditive(const std::string &tokenType, std::unique_ptr<INode> &result);
+
     std::unique_ptr<INode> parseMultiplicative();
     std::unique_ptr<INode> parsePrimary();
-
+    std::unique_ptr<INode> parseUnary();
 
     void printTreeElem(std::unique_ptr<INode>& node);
 

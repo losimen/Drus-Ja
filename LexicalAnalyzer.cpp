@@ -125,32 +125,8 @@ std::vector<Token> LexicalAnalyzer::analyze()
     std::replace(code.begin(), code.end(), '\n', '\r');
     while (nextToken())
     { }
-    //makePriorityList();
 
     return tokenList;
-}
-
-
-void LexicalAnalyzer::makePriorityList()
-{
-    std::vector<unsigned> mulDivTokens;
-
-    for (auto it = tokenList.begin(); it < tokenList.end(); ++it)
-    {
-        if ((it->type.name == TokenTypes::MULTIPLY || it->type.name == TokenTypes::DIVIDE || it->type.name == TokenTypes::MOD) &&
-            ((it-1)->type.name != TokenTypes::RPAREN && (it+1)->type.name != TokenTypes::LPAREN))
-        {
-            mulDivTokens.push_back(std::distance(tokenList.begin(), it));
-        }
-    }
-
-    unsigned offset = 0;
-    for (auto &index: mulDivTokens)
-    {
-        tokenList.insert(tokenList.begin() + index - 1 + offset, Token(TokenType(TokenTypeList::getTokenType(TokenTypes::LPAREN)), "(", 0, 0, 0));
-        tokenList.insert(tokenList.begin() + index + 3 + offset, Token(TokenType(TokenTypeList::getTokenType(TokenTypes::RPAREN)), ")", 0, 0, 0));
-        offset += 2;
-    }
 }
 
 
@@ -164,7 +140,7 @@ void LexicalAnalyzer::printTokens() {
           << std::setw(16) << "Token type" << std::setw(17) << "Value\n";
 
     int cnt = 0;
-    for (auto it : tokenList)
+    for (const auto &it : tokenList)
     {
         file1 << std::setw(8) << cnt;
         file1 << std::setw(16) << it.line;
