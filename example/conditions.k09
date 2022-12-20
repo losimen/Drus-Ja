@@ -1,0 +1,46 @@
+/* Conditions */
+
+Program Psecnd;
+Var;
+    Integer VaarrA 10;
+    Integer VaarrB 5;
+    Integer VaarrC 3;
+
+Start;
+    Input VaarrA;
+    Input VaarrB;
+    Input VaarrC;
+
+    If (VaarrA Ge VaarrB);
+        If (VaarrA Ge VaarrC);
+            Output VaarrA;
+        Else;
+            Output VaarrC;
+        EndIf;
+    Else;
+        If (VaarrB Ge VaarrC);
+            Output VaarrB;
+        Else;
+            Output VaarrC;
+        EndIf;
+    EndIf;
+
+    If ( (VaarrA == VaarrB) && (VaarrA == VaarrC) && (VaarrB == VaarrC) );
+        Output 1;
+    Else;
+        Output 0;
+    EndIf;
+
+    If ( (VaarrA Le 0) || (VaarrB Le 0) || (VaarrC Le 0) );
+        Output -1;
+    Else;
+        Output 0;
+    EndIf;
+
+    If ( !!(VaarrA Ge (VaarrB + VaarrC) ) );
+        Output 10;
+    Else;
+        Output 0;
+    EndIf;
+
+Finish;

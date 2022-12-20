@@ -1,0 +1,29 @@
+/* Loop */
+
+Program Pthird;
+Var;
+    Integer VaarrA 3;
+    Integer VaarrB 11;
+    Integer ConstB 0;
+    Integer VaarrX 0;
+
+Start;
+    Input VaarrA;
+    Input VaarrB;
+
+    ConstB -> VaarrB;
+
+    For VaarrB;
+        Output VaarrB Mul VaarrB;
+    Downto VaarrA;
+
+    For VaarrA;
+        VaarrB -> ConstB;
+        For VaarrB;
+            VaarrX -> VaarrX + 1;
+        Downto 1;
+    Downto 1;
+
+    Output VaarrX;
+
+Finish;

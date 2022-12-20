@@ -1,0 +1,28 @@
+/* Linear algorithm */
+
+Program Pfirst;
+Var;
+   Integer VaarrA 4;
+   Integer VaarrB 2;
+
+   Integer VaarrX 0;
+   Integer VaarrY 0;
+Start;
+    Input VaarrA;
+    Input VaarrB;
+
+    Output VaarrA;
+    Output VaarrB;
+
+    Output VaarrA + VaarrB;
+    Output VaarrA - VaarrB;
+    Output VaarrA Mul VaarrB;
+    Output VaarrA Div VaarrB;
+    Output VaarrA Mod VaarrB;
+
+    VaarrX -> (VaarrA - VaarrB) Mul 10 + (VaarrA + VaarrB) Div 10;
+    VaarrY -> VaarrX + VaarrX Mod 10;
+
+    Output VaarrX;
+    Output VaarrY;
+Finish;
