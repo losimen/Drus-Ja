@@ -14,11 +14,10 @@ Finish;
 2. Save it to the file `format!! [filename].k09`
 3. Build project:
     - `git clone https://github.com/losimen/Drus-Ja`
-    - `cd Drus-Ja`
+    - `cd Drus-Ja/src`
     - `cmake .`
     - `make`
-7. Run executable `Drus-Ja` and input your file name without file extension
-
+4. Run executable `Drus-Ja` and input your file name without file extension
 # Syntax
 Program code consits of 2 parts:
 1. Var block part, where programmer init variables.
