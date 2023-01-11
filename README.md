@@ -1,5 +1,5 @@
 # Drus-Ja
-Custom programming language. 
+Translator for custom programming language. Available only on Windows. The code translates into [masm32](https://www.masm32.com/).
 
 # How to use ?
 1. Write program code:
