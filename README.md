@@ -11,7 +11,7 @@ Start;
     Output VaarrA;
 Finish;
 ```
-2. Save it to the file `format!! [filename].k09`
+2. Save it to the file **format!!** `[filename].k09`
 3. Build project:
     - `git clone https://github.com/losimen/Drus-Ja`
     - `cd Drus-Ja/src`
