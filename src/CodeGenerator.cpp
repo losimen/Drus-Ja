@@ -46,7 +46,6 @@ void CodeGenerator::generateHeader()
     m_code.emplace_back("push -10");
     m_code.emplace_back("call GetStdHandle");
     m_code.emplace_back("mov hConsoleInput, eax");
-    m_code.emplace_back("push -11");
     m_code.emplace_back(";>--CODE SECTION--<");
     m_code.emplace_back("");
     m_code.emplace_back("push offset endMsg");
