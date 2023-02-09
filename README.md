@@ -1,5 +1,5 @@
 # Drus-Ja
-Custom programming language. 
+Translator for custom programming language. Available only on Windows. The code translates into [masm32](https://www.masm32.com/).
 
 # How to use ?
 1. Write program code:
@@ -11,7 +11,7 @@ Start;
     Output VaarrA;
 Finish;
 ```
-2. Save it to the file `format!! [filename].k09`
+2. Save it to the file **format!!** `[filename].k09`
 3. Build project:
     - `git clone https://github.com/losimen/Drus-Ja`
     - `cd Drus-Ja/src`
